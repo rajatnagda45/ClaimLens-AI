@@ -61,8 +61,11 @@ Each accepted claim has: `claim_id`, `start_char`, `end_char`, `quote`,
 - `claim_id == answer_id:start_char:end_char`.
 - Offsets are **zero-based Python Unicode code points**; `start` inclusive,
   `end` exclusive; `quote == ai_answer[start:end]`.
-- Quotes are complete sentences ending in sentence punctuation, with no
-  leading/trailing whitespace.
+- Quotes are complete single sentences ending in sentence punctuation, with no
+  leading/trailing whitespace. The locator rejects mid-sentence **fragments**
+  (even at a word boundary — the char before the leading whitespace must be a
+  sentence terminator or start-of-text) and **merged** quotes that span more
+  than one sentence.
 - Claims are ordered by ascending `start_char`, non-overlapping; duplicate IDs
   and spans are rejected.
 - `label ∈ {supported, contradicted, unknown}`; every `fact_id` exists in the
@@ -78,7 +81,7 @@ price; conditions apply only within their stated scope.
 ## 4. Tool-calling & output validation
 
 - Real OpenAI function-calling loop, **≤ 3 model turns** per answer, with a
-  configurable per-request timeout (`CLAIMLENS_TIMEOUT_S`, default 60s).
+  configurable per-request timeout (`CLAIMLENS_TIMEOUT_S`, default 90s).
 - `get_brand_facts(brand_id)` returns catalogue rows at fact version
   `speaker-catalogue-v4`. Tool name is checked against an **allowlist**; the
   brand argument is schema-validated; unknown brands and malformed args are
@@ -122,14 +125,16 @@ cp .env.example .env
 ```
 
 Tunables (env): `CLAIMLENS_MODEL` (default `gpt-4o-mini`),
-`CLAIMLENS_MAX_TURNS` (default 3), `CLAIMLENS_TIMEOUT_S` (default 60),
+`CLAIMLENS_MAX_TURNS` (default 3), `CLAIMLENS_TIMEOUT_S` (default 90),
 `CLAIMLENS_TEMPERATURE` (default 0). Keys are read via `python-dotenv` and are
 never printed, logged, committed, or placed in reports.
 
 ## 9. Commands
 
 ```bash
-# Tests (deterministic, fake provider; no API key needed)
+# Tests (deterministic, fake provider; no API key needed). DB tests use a
+# dedicated disposable database '<app>_test' and never touch the app DB, so a
+# running PostgreSQL is required but DATABASE_URL data is safe.
 pytest -q
 
 # Start the API
@@ -225,6 +230,43 @@ answer-level error; predictions, errors, latencies, counts, and versions are
 saved while all gold-dependent metrics remain `null` (the reviewer scores these
 with the private key).
 
+## 11a. Post-run fixes & database-evidence note
+
+**The saved JSON/Markdown reports in `reports/` are the authoritative live-run
+evidence.** They were produced by the four live runs and are frozen (unchanged).
+The frozen v1/v2 prompts are likewise unchanged.
+
+**Database rows were lost after the runs.** An early version of the API test
+fixture called `drop_db()` against the configured application database. When the
+full `pytest` suite was later run during verification, it dropped the `claimlens`
+tables, so the originally-persisted run/answer/claim rows no longer exist. This
+did **not** affect the on-disk reports. Live persistence had been observed
+working right after the runs (40/40/10/10 answers; 332/313/82/87 claims) — but
+those specific rows are gone and were **not** restored by rerunning the live
+evaluations (that would spend API credits for no new evidence).
+
+**Fixes made AFTER the live runs** (they apply to future runs and the test
+suite; they do not alter the frozen prompts or the saved reports):
+
+1. **Destructive test fixture removed.** Tests now bind to a dedicated,
+   disposable `<app>_test` database with explicit safety assertions, and
+   `drop_db()` refuses to run against the application database. See
+   `tests/conftest.py::test_db`, `database.drop_db()`, and
+   `tests/test_db_isolation.py`.
+2. **Sentence-fragment rejection.** The locator now rejects word-boundary
+   fragments (the char before the leading whitespace must be a sentence
+   terminator or start-of-text).
+3. **Merged-sentence rejection.** A quote spanning more than one sentence is
+   rejected. Both rules were validated against all 376 gold sentences (0
+   affected).
+4. **Empty-split null metrics.** An empty scheduled (labeled) split now yields
+   `null` quality metrics, distinct from a 0.0 score when gold is present.
+
+**Persistence re-verified** with the disposable database and synthetic /
+fake-provider inputs (no API credits): nonempty-claim, valid-empty, and
+answer-level-error outcomes all persist and read back, and the unique-span
+constraint is enforced (`tests/test_db_isolation.py`).
+
 ## 12. Security & prompt-injection
 
 - `ai_answer` is passed to the model clearly delimited as untrusted data.
@@ -234,13 +276,18 @@ with the private key).
 - The API rejects any client-supplied gold/claim fields with 422
   (`extra="forbid"`). Gold data is used **only** in the evaluation/reporting
   pipeline and never enters the model or tool payload (asserted by a test).
-- Error responses are sanitized (type + message); secrets are kept out of git,
-  logs, traces, and reports.
+- Error responses are sanitized to `{error_type, message}` only; the message is
+  the provider/validation text (it does not contain the API key, which is never
+  interpolated into errors). Credentials are masked (`***set***`) in run
+  metadata and kept out of git, logs, traces, and reports (verified by a
+  `grep` for `sk-…` over `reports/`).
 
 ## 13. Limitations, time, and AI-assistance disclosure
 
 - **Live runs complete.** All four artifacts in `reports/` are from the live
-  OpenAI API (`gpt-4o-mini`). Nothing is mocked or fabricated.
+  OpenAI API (`gpt-4o-mini`). Nothing is mocked or fabricated. The original
+  persisted DB rows were lost to an early destructive test fixture (now fixed) —
+  see §11a; the reports remain the authoritative evidence.
 - **v2 regressed** on joint F1 (−0.039); reported honestly (§11). A better next
   step is a two-pass design (v1 extraction + separate evidence-first labeling).
 - **Residual answer-level errors:** a few development/check answers fail with
@@ -258,9 +305,9 @@ with the private key).
 - **AI assistance:** this repository was implemented with the help of an AI
   coding assistant used through its CLI. I directed the design, chose the v2
   change from the real failure breakdown, reviewed every module, ran the full
-  test suite myself (`pytest -q` → 58 passed), executed all four live runs, and
-  verified the report artifacts and persisted DB rows. The measured v2
-  regression is reported as-is rather than tuned away.
+  test suite myself (`pytest -q` → 70 passed), executed all four live runs, and
+  verified the report artifacts. The measured v2 regression is reported as-is
+  rather than tuned away.
 
 ## Evaluation harness (summary)
 
@@ -277,5 +324,6 @@ joint:      P=C/P, R=C/G, F1=2C/(P+G)      <- primary quality metric
 
 Mandatory check (`tests/test_evaluator.py::test_mandatory_arithmetic`):
 `G=10, P=10, M=8, C=7` → extraction F1 `0.80`, joint F1 `0.70`. Answer errors
-contribute no predictions but keep their gold claims in `G` as missed. Check
-split: all gold-dependent metrics are `null`.
+contribute no predictions but keep their gold claims in `G` as missed. A zero
+denominator with gold present scores `0.0`; an **empty scheduled split** (no
+gold) and the **check split** both report `null` gold-dependent metrics.
