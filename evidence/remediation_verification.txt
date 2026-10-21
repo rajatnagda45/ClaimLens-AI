@@ -1,0 +1,61 @@
+Remediation verification — 2026-10-21
+Runtime revision tested: bc3e58a
+Historical evidence was not regenerated. No paid provider calls were made.
+
+Repository environment:
+$ .venv/bin/python -B -m pytest -q -p no:cacheprovider --run-db
+........................................................................ [ 57%]
+.....................................................                    [100%]
+125 passed in 2.02s
+
+Fresh dependency installation:
+$ /private/tmp/claimlens-repro.BPBa0N/venv/bin/python -m pip install --no-cache-dir -r requirements.txt
+Exit 0; all pinned requirements installed successfully.
+The first sandboxed attempt failed on DNS resolution; the network-authorized
+retry succeeded. This was not a package-resolution failure.
+
+Fresh interpreter, original checkout:
+$ /private/tmp/claimlens-repro.BPBa0N/venv/bin/python -B -m pytest -q -p no:cacheprovider
+..................................ss....s............s...sss............ [ 57%]
+.....................................................                    [100%]
+118 passed, 7 skipped in 0.63s
+
+Fresh clone of the committed tree, no copied .env:
+$ git clone --no-hardlinks /Users/rajatnagda/Desktop/Claimlens-AI /private/tmp/claimlens-repro.BPBa0N/repo
+Cloning into '/private/tmp/claimlens-repro.BPBa0N/repo'...
+done.
+$ env -u OPENAI_API_KEY /private/tmp/claimlens-repro.BPBa0N/venv/bin/python -B -m pytest -q -p no:cacheprovider --run-db
+........................................................................ [ 57%]
+.....................................................                    [100%]
+125 passed in 1.82s
+
+Service smoke check in the fresh clone:
+Started python -B -m uvicorn claimlens.api:app --host 127.0.0.1 --port 18764
+with DATABASE_URL pointing to a newly created claimlens_test_<UUID> database
+and OPENAI_API_KEY unset. Requested /openapi.json, terminated the process,
+then dropped only that created database.
+fresh-clone Uvicorn /openapi.json: HTTP 200
+startup disposable database removed
+
+Read-only database checks after integration tests:
+application database: claimlens
+application tables: (None, None, None)
+remaining UUID test databases: 0
+The absent application tables matched the pre-test condition.
+
+$ .venv/bin/python -B -m scripts.verify_evidence
+Exit 0; frozen_files_verified: 17.
+Development v1: G=376 P=332 M=317 C=243; joint_f1=0.6864406779661016
+Development v2: G=376 P=313 M=296 C=223; joint_f1=0.6473149492017417
+delta_joint_f1=-0.039125728764359935; newly_correct=18; lost_correct=38
+Check v1/v2: accepted predictions=82/87; gold-dependent metrics=null.
+
+$ git diff --check
+Exit 0; no output.
+
+Secret checks before commit:
+Scanned tracked/unignored files and 58 historical Git blobs against configured
+key/password values and common provider-key patterns. No values were printed.
+working-tree secret scan hits: []
+historical blobs scanned: 58 secret hit blobs: []
+This finite scan is not a guarantee against every possible secret format.

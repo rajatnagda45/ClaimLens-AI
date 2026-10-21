@@ -14,6 +14,8 @@ The project implements the Kasparro FSE Intern Pathway assessment.
 - Byte-preservation manifest: [evidence/frozen_sha256.json](evidence/frozen_sha256.json).
 - Historical test transcript: [test_output_safe.txt](test_output_safe.txt).
   It describes the earlier revision, not the current test count.
+- Remediation verification: [evidence/remediation_verification.txt](evidence/remediation_verification.txt)
+  records 125 passing tests, fresh installation/clone checks, and API startup.
 - Read-only verification: `python -m scripts.verify_evidence`.
 - The current runtime contains post-run correctness fixes. Its live extraction
   and classification quality has **not** been measured. Historical scores below
