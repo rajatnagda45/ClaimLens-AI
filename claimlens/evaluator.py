@@ -31,6 +31,11 @@ def score(
     Only SUCCESS/EMPTY answers contribute accepted predictions; ERROR answers
     contribute none, yet their gold claims remain in G (counted as missed).
     """
+    # An empty scheduled split (no gold claims) has NULL quality metrics — it
+    # is not a 0.0 score. (A zero denominator WITH gold present uses 0.0.)
+    if not gold:
+        return check_split_metrics(answer_results)
+
     gold_by_key: dict[tuple[str, int, int], GoldClaim] = {
         (g.answer_id, g.start_char, g.end_char): g for g in gold
     }

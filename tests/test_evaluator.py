@@ -85,6 +85,45 @@ def test_valid_empty_prediction():
     assert m.extraction_f1 == 0.0
 
 
+def test_empty_split_has_null_quality_metrics():
+    # An empty scheduled split (no gold) -> null quality metrics, not 0.0.
+    m = score([], [])
+    assert m.gold_claims is None
+    assert m.joint_f1 is None
+    assert m.extraction_f1 is None
+    assert m.span_matches is None
+
+
+def test_zero_predictions_with_gold_present_is_zero_not_null():
+    # Distinct from an empty split: gold exists but nothing was predicted.
+    g = [gold("A01", 0, 10, "abcdefghi.", "supported")]
+    m = score([ok("A01", [])], g)
+    assert m.gold_claims == 1
+    assert m.joint_f1 == 0.0  # zero, not null
+    assert m.extraction_f1 == 0.0
+
+
+def test_duplicate_answer_outcomes_do_not_double_count_gold():
+    # Two outcome rows for the same answer must not inflate matches: one-to-one
+    # matching keeps a gold span matched at most once.
+    g = [gold("A01", 0, 10, "abcdefghi.", "supported")]
+    dup = ok("A01", [claim("A01", 0, 10, "abcdefghi.", "supported")])
+    m = score([dup, dup], g)
+    assert m.span_matches == 1
+    assert m.accepted_predictions == 2  # duplicate prediction counted in P
+    assert m.extraction_precision == 0.5
+
+
+def test_missing_answer_outcome_counts_gold_as_missed():
+    # Gold for A02 with no outcome row for A02 -> its claims remain missed.
+    g = [gold("A01", 0, 10, "abcdefghi.", "supported"),
+         gold("A02", 0, 8, "jklmnop.", "unknown")]
+    m = score([ok("A01", [claim("A01", 0, 10, "abcdefghi.", "supported")])], g)
+    assert m.gold_claims == 2
+    assert m.span_matches == 1
+    assert "A02:0:8" in m.missed_gold_ids
+
+
 def test_one_to_one_matching():
     # Two predictions cannot both match a single gold span.
     g = [gold("A01", 0, 10, "abcdefghi.", "supported")]
