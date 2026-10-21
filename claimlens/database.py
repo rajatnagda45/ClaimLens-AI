@@ -130,10 +130,39 @@ def get_session_factory():
     return _Session
 
 
+def set_database_url(url: str):
+    """Rebind the global engine/session to `url` (used by tests to target a
+    disposable database). Disposes any previous engine."""
+    global _engine, _Session
+    if _engine is not None:
+        _engine.dispose()
+    _engine = create_engine(url, future=True)
+    _Session = sessionmaker(bind=_engine, future=True, expire_on_commit=False)
+    return _engine
+
+
+def current_url() -> str:
+    return str(get_engine().url)
+
+
 def init_db() -> None:
     """Create all tables idempotently."""
     Base.metadata.create_all(get_engine())
 
 
 def drop_db() -> None:
+    """Drop all tables on the CURRENTLY BOUND engine.
+
+    Safety guard: refuse to drop tables on the configured application database.
+    Tests must first rebind to a disposable database (its name must differ from
+    the application database's). This makes it impossible to wipe the app DB via
+    a test fixture, which previously caused data loss.
+    """
+    app_db = create_engine(get_settings().database_url, future=True).url.database
+    active_db = get_engine().url.database
+    if active_db == app_db:
+        raise RuntimeError(
+            f"refusing to drop_db() on the application database {active_db!r}; "
+            "rebind to a disposable test database first"
+        )
     Base.metadata.drop_all(get_engine())
