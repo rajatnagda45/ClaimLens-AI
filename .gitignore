@@ -9,7 +9,8 @@ __pycache__/
 .pytest_cache/
 *.egg-info/
 
-# OS
+# OS / local tooling
 .DS_Store
+.claude/
 
 # Keep supplied CSVs and reports/ (evidence) tracked.
