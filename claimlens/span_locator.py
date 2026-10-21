@@ -10,9 +10,16 @@ No fuzzy matching, no normalization, no edited source.
 """
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 
 SENTENCE_ENDINGS = (".", "!", "?")
+
+# An internal sentence terminator (optionally followed by a closing quote/
+# bracket) followed by whitespace indicates the quote spans MORE than one
+# sentence, i.e. a merged quote. Checked against quote[:-1] so the quote's own
+# final punctuation is excluded.
+_INTERNAL_BOUNDARY = re.compile(r"[.!?][\"')\]]?\s")
 
 
 @dataclass(frozen=True)
@@ -25,18 +32,37 @@ class SpanError(Exception):
     """Raised when a quote cannot be unambiguously and validly located."""
 
 
+def _sentence_start_ok(text: str, start: int) -> bool:
+    """True if `start` is a real sentence boundary.
+
+    Whitespace immediately before `start` is necessary but NOT sufficient: a
+    fragment like "is red." inside "It is red." is also whitespace-preceded.
+    We require the first non-space character before the leading whitespace run
+    to be a sentence terminator (.!?) or start-of-text.
+    """
+    i = start - 1
+    while i >= 0 and text[i].isspace():
+        i -= 1
+    return i < 0 or text[i] in ".!?"
+
+
 def _boundary_ok(text: str, start: int, end: int) -> bool:
     """A located span must be a complete sentence, not a fragment.
 
-    The char before `start` must be whitespace or start-of-text; the char
-    after `end` must be whitespace or end-of-text. This rejects mid-sentence
-    fragments and merged-across-sentence slices that happen to match.
+    `start` must be a real sentence boundary (see `_sentence_start_ok`) and the
+    char after `end` must be whitespace or end-of-text. This rejects
+    mid-sentence fragments even when they sit at a word boundary.
     """
     before = text[start - 1] if start > 0 else None
     after = text[end] if end < len(text) else None
-    left_ok = before is None or before.isspace()
+    left_ok = (before is None or before.isspace()) and _sentence_start_ok(text, start)
     right_ok = after is None or after.isspace()
     return left_ok and right_ok
+
+
+def _is_single_sentence(quote: str) -> bool:
+    """False if the quote contains an internal sentence boundary (merged)."""
+    return _INTERNAL_BOUNDARY.search(quote[:-1]) is None
 
 
 def locate(text: str, quote: str, cursor: int = 0) -> LocatedSpan:
@@ -52,6 +78,8 @@ def locate(text: str, quote: str, cursor: int = 0) -> LocatedSpan:
         raise SpanError("quote has leading/trailing whitespace")
     if not quote.endswith(SENTENCE_ENDINGS):
         raise SpanError("quote does not end with sentence punctuation")
+    if not _is_single_sentence(quote):
+        raise SpanError("quote spans more than one sentence (merged)")
 
     search_from = cursor
     while True:
@@ -103,6 +131,8 @@ def locate_all(text: str, quotes: list[str]) -> list[LocatedSpan]:
             raise SpanError("quote has leading/trailing whitespace")
         if not q.endswith(SENTENCE_ENDINGS):
             raise SpanError("quote does not end with sentence punctuation")
+        if not _is_single_sentence(q):
+            raise SpanError("quote spans more than one sentence (merged)")
 
         occs = _all_occurrences(text, q)
         if not occs:

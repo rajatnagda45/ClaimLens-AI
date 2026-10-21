@@ -49,3 +49,30 @@ def test_boundary_rejects_midsentence_fragment():
     # "califragilistic" is a substring but not sentence-bounded -> not found
     with pytest.raises(SpanError):
         locate(text, "califragilistic.")
+
+
+def test_fragment_at_word_boundary_rejected():
+    # "is red." sits at a word boundary (space before) but is NOT a sentence
+    # start -> must be rejected, not silently located.
+    text = "It is red. It is blue."
+    with pytest.raises(SpanError):
+        locate(text, "is red.")
+
+
+def test_merged_two_sentences_rejected():
+    text = "It is red. It is blue."
+    with pytest.raises(SpanError):
+        locate(text, "It is red. It is blue.")
+
+
+def test_merged_rejected_in_locate_all():
+    text = "It is red. It is blue."
+    with pytest.raises(SpanError):
+        locate_all(text, ["It is red. It is blue."])
+
+
+def test_decimal_and_single_sentence_not_flagged_as_merged():
+    # A legitimate single sentence containing a decimal must still locate.
+    text = "The weight is 1.5 kilograms."
+    span = locate(text, "The weight is 1.5 kilograms.")
+    assert text[span.start_char:span.end_char] == "The weight is 1.5 kilograms."
