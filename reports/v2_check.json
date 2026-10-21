@@ -1,0 +1,1725 @@
+{
+  "metadata": {
+    "run_id": "f81863cc-f9d2-4d70-8359-25eb3ba57de7",
+    "split": "check",
+    "agent_version": "v2",
+    "prompt_version": "extract-classify-v2",
+    "dataset_version": "long-brand-answers-50-v4",
+    "evaluator_version": "sentence-spans-and-labels-v4",
+    "fact_version": "speaker-catalogue-v4",
+    "provider": "OpenAIProvider",
+    "model": "gpt-4o-mini",
+    "settings": {
+      "openai_api_key": "***set***",
+      "model": "gpt-4o-mini",
+      "provider": "openai",
+      "max_turns": 3,
+      "request_timeout_s": 60.0,
+      "temperature": 0.0,
+      "database_url": "postgresql+psycopg://localhost:5432/claimlens",
+      "answers_csv": "/Users/rajatnagda/Desktop/Claimlens-AI/answers.csv",
+      "brand_facts_csv": "/Users/rajatnagda/Desktop/Claimlens-AI/brand_facts.csv",
+      "development_gold_csv": "/Users/rajatnagda/Desktop/Claimlens-AI/development_gold.csv"
+    },
+    "source_hashes": {
+      "answers.csv": "fa28e813ea54b4e5ea985585f22f084d826241e1182accbc27ace17066125724",
+      "brand_facts.csv": "2190d40fad2dd167ef2437956c43d595aaf2554ea673a4789b9343cb7e2936f2",
+      "development_gold.csv": "afe84cc78f304afb6a4aaa505dd7504af80fcbf8bc507806aa5ff0aab6bf4850"
+    },
+    "status": "completed",
+    "timestamp": "2026-10-21T09:02:20.655844+00:00",
+    "is_live": true
+  },
+  "metrics": {
+    "gold_claims": null,
+    "accepted_predictions": null,
+    "span_matches": null,
+    "correct_label_matches": null,
+    "extraction_precision": null,
+    "extraction_recall": null,
+    "extraction_f1": null,
+    "joint_precision": null,
+    "joint_recall": null,
+    "joint_f1": null,
+    "gold_coverage": null,
+    "missed_gold_ids": null,
+    "unmatched_prediction_ids": null,
+    "wrong_label_ids": null,
+    "answers_success": 9,
+    "answers_empty": 0,
+    "answers_error": 1
+  },
+  "answers": [
+    {
+      "answer_id": "A41",
+      "status": "success",
+      "error_type": null,
+      "error_message": null,
+      "latency_ms": 8658.813290996477,
+      "turns_used": 3,
+      "claims": [
+        {
+          "claim_id": "A41:371:551",
+          "start_char": 371,
+          "end_char": 551,
+          "quote": "An opened StoneWave Go can be returned to any authorized India seller within thirty days for a full refund, even when the speaker has no manufacturing defect or functional problem.",
+          "label": "supported",
+          "fact_ids": [],
+          "reason": "The return policy for opened products is not specified in the catalogue facts."
+        },
+        {
+          "claim_id": "A41:552:732",
+          "start_char": 552,
+          "end_char": 732,
+          "quote": "The official India catalogue price of StoneWave Go will drop by INR 300 during January 2027, with that future reduction applying before shipping to purchases from the brand itself.",
+          "label": "contradicted",
+          "fact_ids": [
+            "stonewave.go.price_2026"
+          ],
+          "reason": "The current price for StoneWave Go in 2026 is INR 1999, and a future price drop is not established."
+        },
+        {
+          "claim_id": "A41:734:910",
+          "start_char": 734,
+          "end_char": 910,
+          "quote": "Using a twenty-watt wall adapter, a fully discharged StoneWave Go reaches a complete charge in ninety minutes, so a short charging stop is enough to restore the entire battery.",
+          "label": "unknown",
+          "fact_ids": [],
+          "reason": "Charging time is not specified in the catalogue facts."
+        },
+        {
+          "claim_id": "A41:911:1071",
+          "start_char": 911,
+          "end_char": 1071,
+          "quote": "At fifty percent volume with EQ off and a new battery in the laboratory, StoneWave Go is rated for 1020 minutes of playback before recharging becomes necessary.",
+          "label": "contradicted",
+          "fact_ids": [
+            "stonewave.go.battery_50_percent"
+          ],
+          "reason": "The stated laboratory playback time for StoneWave Go at 50% volume is 16 hours (960 minutes), which contradicts the claim."
+        },
+        {
+          "claim_id": "A41:1268:1418",
+          "start_char": 1268,
+          "end_char": 1418,
+          "quote": "For an India purchase at the official catalogue list price on 1 October 2026, StoneWave Go still costs INR 1,799 including tax but excluding shipping.",
+          "label": "contradicted",
+          "fact_ids": [
+            "stonewave.go.price_2026"
+          ],
+          "reason": "The official catalogue price for StoneWave Go in 2026 is INR 1999, contradicting the claim."
+        },
+        {
+          "claim_id": "A41:1419:1599",
+          "start_char": 1419,
+          "end_char": 1599,
+          "quote": "Considering the speaker alone and leaving retail packaging and accessories out of the measurement, StoneWave Go has a stated mass of 0.44 kilograms for carrying-weight comparisons.",
+          "label": "supported",
+          "fact_ids": [],
+          "reason": "The weight of StoneWave Go is not specified in the catalogue facts."
+        },
+        {
+          "claim_id": "A41:1600:1776",
+          "start_char": 1600,
+          "end_char": 1776,
+          "quote": "The stated laboratory playback time for StoneWave Go, using a new battery with EQ off at one hundred percent volume, remains 16 hours without any reduction for louder playback.",
+          "label": "supported",
+          "fact_ids": [
+            "stonewave.go.battery_100_percent"
+          ],
+          "reason": "The playback time of 16 hours at 50% volume is supported by the catalogue facts."
+        },
+        {
+          "claim_id": "A41:1778:1940",
+          "start_char": 1778,
+          "end_char": 1940,
+          "quote": "Looking back specifically at the 2025 India catalogue rather than the current offer, the listed tax-inclusive price of StoneWave Go was INR 1,799 before shipping.",
+          "label": "supported",
+          "fact_ids": [
+            "stonewave.go.price_2025"
+          ],
+          "reason": "The price of INR 1799 for 2025 is supported by the catalogue facts."
+        },
+        {
+          "claim_id": "A41:1941:2116",
+          "start_char": 1941,
+          "end_char": 2116,
+          "quote": "For wired digital audio specifically, the USB-C connector on StoneWave Go does not provide an audio-input path, regardless of the fact that the connector also serves charging.",
+          "label": "supported",
+          "fact_ids": [
+            "stonewave.go.usb_audio"
+          ],
+          "reason": "The USB-C connector does not provide an audio input path as per the catalogue facts."
+        }
+      ],
+      "trace": [
+        {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\": \"stonewave\"}"
+            },
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\": \"cleartrail\"}"
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "stonewave",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "cleartrail",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\": \"cleartrail\"}"
+            },
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\": \"stonewave\"}"
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "cleartrail",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "stonewave",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "name": "submit_claims",
+              "arguments": "{\"claims\":[{\"quote\":\"An opened StoneWave Go can be returned to any authorized India seller within thirty days for a full refund, even when the speaker has no manufacturing defect or functional problem.\",\"label\":\"supported\",\"fact_ids\":[],\"reason\":\"The return policy for opened products is not specified in the catalogue facts.\"},{\"quote\":\"The official India catalogue price of StoneWave Go will drop by INR 300 during January 2027, with that future reduction applying before shipping to purchases from the brand itself.\",\"label\":\"contradicted\",\"fact_ids\":[\"stonewave.go.price_2026\"],\"reason\":\"The current price for StoneWave Go in 2026 is INR 1999, and a future price drop is not established.\"},{\"quote\":\"Using a twenty-watt wall adapter, a fully discharged StoneWave Go reaches a complete charge in ninety minutes, so a short charging stop is enough to restore the entire battery.\",\"label\":\"unknown\",\"fact_ids\":[],\"reason\":\"Charging time is not specified in the catalogue facts.\"},{\"quote\":\"At fifty percent volume with EQ off and a new battery in the laboratory, StoneWave Go is rated for 1020 minutes of playback before recharging becomes necessary.\",\"label\":\"contradicted\",\"fact_ids\":[\"stonewave.go.battery_50_percent\"],\"reason\":\"The stated laboratory playback time for StoneWave Go at 50% volume is 16 hours (960 minutes), which contradicts the claim.\"},{\"quote\":\"For an India purchase at the official catalogue list price on 1 October 2026, StoneWave Go still costs INR 1,799 including tax but excluding shipping.\",\"label\":\"contradicted\",\"fact_ids\":[\"stonewave.go.price_2026\"],\"reason\":\"The official catalogue price for StoneWave Go in 2026 is INR 1999, contradicting the claim.\"},{\"quote\":\"Considering the speaker alone and leaving retail packaging and accessories out of the measurement, StoneWave Go has a stated mass of 0.44 kilograms for carrying-weight comparisons.\",\"label\":\"supported\",\"fact_ids\":[],\"reason\":\"The weight of StoneWave Go is not specified in the catalogue facts.\"},{\"quote\":\"The stated laboratory playback time for StoneWave Go, using a new battery with EQ off at one hundred percent volume, remains 16 hours without any reduction for louder playback.\",\"label\":\"supported\",\"fact_ids\":[\"stonewave.go.battery_100_percent\"],\"reason\":\"The playback time of 16 hours at 50% volume is supported by the catalogue facts.\"},{\"quote\":\"Looking back specifically at the 2025 India catalogue rather than the current offer, the listed tax-inclusive price of StoneWave Go was INR 1,799 before shipping.\",\"label\":\"supported\",\"fact_ids\":[\"stonewave.go.price_2025\"],\"reason\":\"The price of INR 1799 for 2025 is supported by the catalogue facts.\"},{\"quote\":\"For wired digital audio specifically, the USB-C connector on StoneWave Go does not provide an audio-input path, regardless of the fact that the connector also serves charging.\",\"label\":\"supported\",\"fact_ids\":[\"stonewave.go.usb_audio\"],\"reason\":\"The USB-C connector does not provide an audio input path as per the catalogue facts.\"}]}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "answer_id": "A42",
+      "status": "success",
+      "error_type": null,
+      "error_message": null,
+      "latency_ms": 8661.973042006139,
+      "turns_used": 3,
+      "claims": [
+        {
+          "claim_id": "A42:306:489",
+          "start_char": 306,
+          "end_char": 489,
+          "quote": "An opened ClearTrail Plus can be returned to any authorized India seller within thirty days for a full refund, even when the speaker has no manufacturing defect or functional problem.",
+          "label": "supported",
+          "fact_ids": [],
+          "reason": "The return policy for opened ClearTrail Plus is stated without contradiction in the catalogue."
+        },
+        {
+          "claim_id": "A42:490:689",
+          "start_char": 490,
+          "end_char": 689,
+          "quote": "Whatever conclusions a buyer draws from the water-resistance rating, water damage remains excluded from the standard India manufacturer warranty covering ClearTrail Plus after an authorized purchase.",
+          "label": "supported",
+          "fact_ids": [],
+          "reason": "The exclusion of water damage from the warranty is consistent with the catalogue facts."
+        },
+        {
+          "claim_id": "A42:691:877",
+          "start_char": 691,
+          "end_char": 877,
+          "quote": "ClearTrail Plus supports the AAC Bluetooth audio codec on compatible phones, so its published Bluetooth version can be treated as evidence for that specific audio-compression capability.",
+          "label": "unknown",
+          "fact_ids": [],
+          "reason": "The specific support for AAC codec is not confirmed in the catalogue."
+        },
+        {
+          "claim_id": "A42:878:1046",
+          "start_char": 878,
+          "end_char": 1046,
+          "quote": "The official India retail box for ClearTrail Plus does not contain a wall charging adapter, so the box contents should not be inferred just from the charging-port type.",
+          "label": "supported",
+          "fact_ids": [],
+          "reason": "The absence of a wall charging adapter in the retail box is consistent with the catalogue facts."
+        },
+        {
+          "claim_id": "A42:1047:1236",
+          "start_char": 1047,
+          "end_char": 1236,
+          "quote": "In winter weather below freezing, ClearTrail Plus delivers its full 20-hour laboratory battery duration at fifty percent volume, without the outdoor temperature changing the stated runtime.",
+          "label": "supported",
+          "fact_ids": [],
+          "reason": "The stated battery duration of 20 hours at 50% volume is confirmed in the catalogue."
+        },
+        {
+          "claim_id": "A42:1433:1597",
+          "start_char": 1433,
+          "end_char": 1597,
+          "quote": "For a current India catalogue comparison before shipping, ClearTrail Plus is INR 1,200 less expensive than ClearTrail Mini, with tax included in both listed prices.",
+          "label": "contradicted",
+          "fact_ids": [
+            "cleartrail.mini.price_2026",
+            "cleartrail.plus.price_2026"
+          ],
+          "reason": "ClearTrail Plus is priced at INR 2,499 and ClearTrail Mini at INR 1,299, contradicting the claim of a 1,200 INR difference."
+        },
+        {
+          "claim_id": "A42:1598:1777",
+          "start_char": 1598,
+          "end_char": 1777,
+          "quote": "An original invoice is unnecessary when claiming the standard India manufacturer warranty for ClearTrail Plus, provided the buyer says the purchase came from an authorized seller.",
+          "label": "contradicted",
+          "fact_ids": [
+            "cleartrail.plus.warranty_invoice_required"
+          ],
+          "reason": "The catalogue states that an original invoice is required for warranty claims."
+        },
+        {
+          "claim_id": "A42:1779:1953",
+          "start_char": 1779,
+          "end_char": 1953,
+          "quote": "For manufacturing defects following an authorized India purchase with the original invoice, the standard manufacturer warranty on ClearTrail Plus lasts 1 years from purchase.",
+          "label": "contradicted",
+          "fact_ids": [
+            "cleartrail.plus.warranty_india"
+          ],
+          "reason": "The warranty duration is stated as 12 months (1 year) in the catalogue, which is consistent, but the claim lacks clarity on the invoice requirement."
+        },
+        {
+          "claim_id": "A42:1954:2156",
+          "start_char": 1954,
+          "end_char": 2156,
+          "quote": "An authorized India service centre guarantees repair of ClearTrail Plus within two working days after receiving the unit and the required purchase paperwork, regardless of replacement-part availability.",
+          "label": "unknown",
+          "fact_ids": [],
+          "reason": "The specific guarantee for repair time is not mentioned in the catalogue."
+        },
+        {
+          "claim_id": "A42:2157:2336",
+          "start_char": 2157,
+          "end_char": 2336,
+          "quote": "In the 2025 India catalogue, before the current-year revision, ClearTrail Plus already carried the same tax-inclusive list price of INR 2,499, excluding shipping from that amount.",
+          "label": "supported",
+          "fact_ids": [],
+          "reason": "The price of INR 2,499 for ClearTrail Plus is confirmed in the catalogue."
+        }
+      ],
+      "trace": [
+        {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\":\"cleartrail\"}"
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "cleartrail",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\": \"cloudnote\"}"
+            },
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\": \"stonewave\"}"
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "cloudnote",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "stonewave",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "name": "submit_claims",
+              "arguments": "{\"claims\":[{\"quote\":\"An opened ClearTrail Plus can be returned to any authorized India seller within thirty days for a full refund, even when the speaker has no manufacturing defect or functional problem.\",\"label\":\"supported\",\"fact_ids\":[],\"reason\":\"The return policy for opened ClearTrail Plus is stated without contradiction in the catalogue.\"},{\"quote\":\"Whatever conclusions a buyer draws from the water-resistance rating, water damage remains excluded from the standard India manufacturer warranty covering ClearTrail Plus after an authorized purchase.\",\"label\":\"supported\",\"fact_ids\":[],\"reason\":\"The exclusion of water damage from the warranty is consistent with the catalogue facts.\"},{\"quote\":\"ClearTrail Plus supports the AAC Bluetooth audio codec on compatible phones, so its published Bluetooth version can be treated as evidence for that specific audio-compression capability.\",\"label\":\"unknown\",\"fact_ids\":[],\"reason\":\"The specific support for AAC codec is not confirmed in the catalogue.\"},{\"quote\":\"The official India retail box for ClearTrail Plus does not contain a wall charging adapter, so the box contents should not be inferred just from the charging-port type.\",\"label\":\"supported\",\"fact_ids\":[],\"reason\":\"The absence of a wall charging adapter in the retail box is consistent with the catalogue facts.\"},{\"quote\":\"In winter weather below freezing, ClearTrail Plus delivers its full 20-hour laboratory battery duration at fifty percent volume, without the outdoor temperature changing the stated runtime.\",\"label\":\"supported\",\"fact_ids\":[],\"reason\":\"The stated battery duration of 20 hours at 50% volume is confirmed in the catalogue.\"},{\"quote\":\"For a current India catalogue comparison before shipping, ClearTrail Plus is INR 1,200 less expensive than ClearTrail Mini, with tax included in both listed prices.\",\"label\":\"contradicted\",\"fact_ids\":[\"cleartrail.mini.price_2026\",\"cleartrail.plus.price_2026\"],\"reason\":\"ClearTrail Plus is priced at INR 2,499 and ClearTrail Mini at INR 1,299, contradicting the claim of a 1,200 INR difference.\"},{\"quote\":\"An original invoice is unnecessary when claiming the standard India manufacturer warranty for ClearTrail Plus, provided the buyer says the purchase came from an authorized seller.\",\"label\":\"contradicted\",\"fact_ids\":[\"cleartrail.plus.warranty_invoice_required\"],\"reason\":\"The catalogue states that an original invoice is required for warranty claims.\"},{\"quote\":\"For manufacturing defects following an authorized India purchase with the original invoice, the standard manufacturer warranty on ClearTrail Plus lasts 1 years from purchase.\",\"label\":\"contradicted\",\"fact_ids\":[\"cleartrail.plus.warranty_india\"],\"reason\":\"The warranty duration is stated as 12 months (1 year) in the catalogue, which is consistent, but the claim lacks clarity on the invoice requirement.\"},{\"quote\":\"An authorized India service centre guarantees repair of ClearTrail Plus within two working days after receiving the unit and the required purchase paperwork, regardless of replacement-part availability.\",\"label\":\"unknown\",\"fact_ids\":[],\"reason\":\"The specific guarantee for repair time is not mentioned in the catalogue.\"},{\"quote\":\"In the 2025 India catalogue, before the current-year revision, ClearTrail Plus already carried the same tax-inclusive list price of INR 2,499, excluding shipping from that amount.\",\"label\":\"supported\",\"fact_ids\":[],\"reason\":\"The price of INR 2,499 for ClearTrail Plus is confirmed in the catalogue.\"}]}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "answer_id": "A43",
+      "status": "success",
+      "error_type": null,
+      "error_message": null,
+      "latency_ms": 9791.730500000995,
+      "turns_used": 3,
+      "claims": [
+        {
+          "claim_id": "A43:306:484",
+          "start_char": 306,
+          "end_char": 484,
+          "quote": "When measuring just the speaker rather than the retail box and accessories, ClearTrail Plus weighs 320 grams, matching the carrying-weight figure associated with ClearTrail Mini.",
+          "label": "contradicted",
+          "fact_ids": [
+            "cleartrail.plus.weight",
+            "cleartrail.mini.weight"
+          ],
+          "reason": "ClearTrail Plus is stated to weigh 320 grams, but the actual weight is 580 grams according to the catalogue."
+        },
+        {
+          "claim_id": "A43:485:644",
+          "start_char": 485,
+          "end_char": 644,
+          "quote": "The built-in Wi-Fi capability of ClearTrail Plus is present, independently of whatever Bluetooth connection a listener might also choose for everyday playback.",
+          "label": "unknown",
+          "fact_ids": [],
+          "reason": "The catalogue does not provide information on the Wi-Fi capability of ClearTrail Plus."
+        },
+        {
+          "claim_id": "A43:646:840",
+          "start_char": 646,
+          "end_char": 840,
+          "quote": "The Bluetooth connection on ClearTrail Plus maintains uninterrupted playback at a distance of one hundred metres outdoors, even when a listener changes the phone used as the transmitting device.",
+          "label": "unknown",
+          "fact_ids": [],
+          "reason": "The catalogue does not specify the Bluetooth range for ClearTrail Plus."
+        },
+        {
+          "claim_id": "A43:841:1043",
+          "start_char": 841,
+          "end_char": 1043,
+          "quote": "No version of ClearTrail Plus has ever been offered in blue, including previous-year retail stock and editions supplied only through independent authorized sellers rather than the official online store.",
+          "label": "unknown",
+          "fact_ids": [],
+          "reason": "The catalogue does not provide information on color availability for ClearTrail Plus."
+        },
+        {
+          "claim_id": "A43:1240:1423",
+          "start_char": 1240,
+          "end_char": 1423,
+          "quote": "Considering the speaker alone and leaving retail packaging and accessories out of the measurement, ClearTrail Plus has a stated mass of 0.58 kilograms for carrying-weight comparisons.",
+          "label": "contradicted",
+          "fact_ids": [
+            "cleartrail.plus.weight"
+          ],
+          "reason": "The stated mass of 0.58 kilograms contradicts the catalogue fact that lists ClearTrail Plus weight as 580 grams."
+        },
+        {
+          "claim_id": "A43:1424:1578",
+          "start_char": 1424,
+          "end_char": 1578,
+          "quote": "For the current India catalogue, ClearTrail Plus is listed at INR 1,200 more than ClearTrail Mini, comparing the two tax-inclusive prices before shipping.",
+          "label": "unknown",
+          "fact_ids": [],
+          "reason": "The catalogue does not provide the price of ClearTrail Mini for comparison."
+        },
+        {
+          "claim_id": "A43:1579:1750",
+          "start_char": 1579,
+          "end_char": 1750,
+          "quote": "The move from the 2025 India catalogue to the 2026 catalogue raised the tax-inclusive list price of ClearTrail Plus by INR 300, with shipping excluded in both comparisons.",
+          "label": "supported",
+          "fact_ids": [
+            "cleartrail.plus.price_2025",
+            "cleartrail.plus.price_2026"
+          ],
+          "reason": "The price increase from INR 2,199 in 2025 to INR 2,499 in 2026 is confirmed by the catalogue."
+        },
+        {
+          "claim_id": "A43:1752:1935",
+          "start_char": 1752,
+          "end_char": 1935,
+          "quote": "An opened ClearTrail Plus can be returned to any authorized India seller within thirty days for a full refund, even when the speaker has no manufacturing defect or functional problem.",
+          "label": "unknown",
+          "fact_ids": [],
+          "reason": "The catalogue does not specify return policies for ClearTrail Plus."
+        },
+        {
+          "claim_id": "A43:1936:2124",
+          "start_char": 1936,
+          "end_char": 2124,
+          "quote": "For wired digital audio specifically, the USB-C connector on ClearTrail Plus does not provide an audio-input path, so the connector can be treated accordingly when choosing a wired source.",
+          "label": "supported",
+          "fact_ids": [
+            "cleartrail.plus.usb_audio"
+          ],
+          "reason": "The statement that the USB-C connector does not provide an audio-input path is supported by the catalogue."
+        },
+        {
+          "claim_id": "A43:2125:2227",
+          "start_char": 2125,
+          "end_char": 2227,
+          "quote": "Before choosing, compare the statements against the way you actually expect to connect your equipment.",
+          "label": "unknown",
+          "fact_ids": [],
+          "reason": "This is an advisory statement and does not contain verifiable claims."
+        }
+      ],
+      "trace": [
+        {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\":\"cleartrail\"}"
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "cleartrail",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\": \"cloudnote\"}"
+            },
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\": \"stonewave\"}"
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "cloudnote",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "stonewave",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "name": "submit_claims",
+              "arguments": "{\"claims\":[{\"quote\":\"When measuring just the speaker rather than the retail box and accessories, ClearTrail Plus weighs 320 grams, matching the carrying-weight figure associated with ClearTrail Mini.\",\"label\":\"contradicted\",\"fact_ids\":[\"cleartrail.plus.weight\",\"cleartrail.mini.weight\"],\"reason\":\"ClearTrail Plus is stated to weigh 320 grams, but the actual weight is 580 grams according to the catalogue.\"},{\"quote\":\"The built-in Wi-Fi capability of ClearTrail Plus is present, independently of whatever Bluetooth connection a listener might also choose for everyday playback.\",\"label\":\"unknown\",\"fact_ids\":[],\"reason\":\"The catalogue does not provide information on the Wi-Fi capability of ClearTrail Plus.\"},{\"quote\":\"The Bluetooth connection on ClearTrail Plus maintains uninterrupted playback at a distance of one hundred metres outdoors, even when a listener changes the phone used as the transmitting device.\",\"label\":\"unknown\",\"fact_ids\":[],\"reason\":\"The catalogue does not specify the Bluetooth range for ClearTrail Plus.\"},{\"quote\":\"No version of ClearTrail Plus has ever been offered in blue, including previous-year retail stock and editions supplied only through independent authorized sellers rather than the official online store.\",\"label\":\"unknown\",\"fact_ids\":[],\"reason\":\"The catalogue does not provide information on color availability for ClearTrail Plus.\"},{\"quote\":\"Considering the speaker alone and leaving retail packaging and accessories out of the measurement, ClearTrail Plus has a stated mass of 0.58 kilograms for carrying-weight comparisons.\",\"label\":\"contradicted\",\"fact_ids\":[\"cleartrail.plus.weight\"],\"reason\":\"The stated mass of 0.58 kilograms contradicts the catalogue fact that lists ClearTrail Plus weight as 580 grams.\"},{\"quote\":\"For the current India catalogue, ClearTrail Plus is listed at INR 1,200 more than ClearTrail Mini, comparing the two tax-inclusive prices before shipping.\",\"label\":\"unknown\",\"fact_ids\":[],\"reason\":\"The catalogue does not provide the price of ClearTrail Mini for comparison.\"},{\"quote\":\"The move from the 2025 India catalogue to the 2026 catalogue raised the tax-inclusive list price of ClearTrail Plus by INR 300, with shipping excluded in both comparisons.\",\"label\":\"supported\",\"fact_ids\":[\"cleartrail.plus.price_2025\",\"cleartrail.plus.price_2026\"],\"reason\":\"The price increase from INR 2,199 in 2025 to INR 2,499 in 2026 is confirmed by the catalogue.\"},{\"quote\":\"An opened ClearTrail Plus can be returned to any authorized India seller within thirty days for a full refund, even when the speaker has no manufacturing defect or functional problem.\",\"label\":\"unknown\",\"fact_ids\":[],\"reason\":\"The catalogue does not specify return policies for ClearTrail Plus.\"},{\"quote\":\"For wired digital audio specifically, the USB-C connector on ClearTrail Plus does not provide an audio-input path, so the connector can be treated accordingly when choosing a wired source.\",\"label\":\"supported\",\"fact_ids\":[\"cleartrail.plus.usb_audio\"],\"reason\":\"The statement that the USB-C connector does not provide an audio-input path is supported by the catalogue.\"},{\"quote\":\"Before choosing, compare the statements against the way you actually expect to connect your equipment.\",\"label\":\"unknown\",\"fact_ids\":[],\"reason\":\"This is an advisory statement and does not contain verifiable claims.\"}]}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "answer_id": "A44",
+      "status": "success",
+      "error_type": null,
+      "error_message": null,
+      "latency_ms": 10156.656749997637,
+      "turns_used": 3,
+      "claims": [
+        {
+          "claim_id": "A44:527:695",
+          "start_char": 527,
+          "end_char": 695,
+          "quote": "The official India retail box for ClearTrail Mini does not contain a wall charging adapter, so the box contents should not be inferred just from the charging-port type.",
+          "label": "supported",
+          "fact_ids": [
+            "cleartrail.mini.adapter_included"
+          ],
+          "reason": "The fact states that the adapter is not included in the official retail box."
+        },
+        {
+          "claim_id": "A44:697:880",
+          "start_char": 697,
+          "end_char": 880,
+          "quote": "An opened ClearTrail Mini can be returned to any authorized India seller within thirty days for a full refund, even when the speaker has no manufacturing defect or functional problem.",
+          "label": "unknown",
+          "fact_ids": [],
+          "reason": "There is no specific fact regarding the return policy for ClearTrail Mini."
+        },
+        {
+          "claim_id": "A44:881:1044",
+          "start_char": 881,
+          "end_char": 1044,
+          "quote": "Looking back specifically at the 2025 India catalogue rather than the current offer, the listed tax-inclusive price of ClearTrail Mini was INR 999 before shipping.",
+          "label": "supported",
+          "fact_ids": [
+            "cleartrail.mini.price_2025"
+          ],
+          "reason": "The fact confirms the price of INR 999 for 2025."
+        },
+        {
+          "claim_id": "A44:1045:1224",
+          "start_char": 1045,
+          "end_char": 1224,
+          "quote": "An original invoice is unnecessary when claiming the standard India manufacturer warranty for ClearTrail Mini, provided the buyer says the purchase came from an authorized seller.",
+          "label": "contradicted",
+          "fact_ids": [
+            "cleartrail.mini.warranty_invoice_required"
+          ],
+          "reason": "The fact states that an original invoice is required for warranty claims."
+        },
+        {
+          "claim_id": "A44:1226:1420",
+          "start_char": 1226,
+          "end_char": 1420,
+          "quote": "Keep the exact model and the relevant conditions in view as you read the remaining details, and ask whether each sentence would still mean the same thing after a change of date, market or usage.",
+          "label": "unknown",
+          "fact_ids": [],
+          "reason": "This is a general statement and does not provide verifiable information."
+        },
+        {
+          "claim_id": "A44:1421:1575",
+          "start_char": 1421,
+          "end_char": 1575,
+          "quote": "For the current India catalogue, ClearTrail Mini is listed at INR 1,200 less than ClearTrail Plus, comparing the two tax-inclusive prices before shipping.",
+          "label": "contradicted",
+          "fact_ids": [
+            "cleartrail.mini.price_2026",
+            "cleartrail.plus.price_2026"
+          ],
+          "reason": "The price of ClearTrail Mini is INR 1299, while ClearTrail Plus is INR 2499, making the difference INR 1200."
+        },
+        {
+          "claim_id": "A44:1576:1778",
+          "start_char": 1576,
+          "end_char": 1778,
+          "quote": "No version of ClearTrail Mini has ever been offered in blue, including previous-year retail stock and editions supplied only through independent authorized sellers rather than the official online store.",
+          "label": "unknown",
+          "fact_ids": [],
+          "reason": "There are no facts regarding the color options available for ClearTrail Mini."
+        },
+        {
+          "claim_id": "A44:1780:1985",
+          "start_char": 1780,
+          "end_char": 1985,
+          "quote": "A retail purchase of ClearTrail Mini in Germany qualifies for the same 12-month manufacturer warranty described for authorized India purchases, without any different regional terms affecting that duration.",
+          "label": "unknown",
+          "fact_ids": [],
+          "reason": "There are no facts regarding warranty terms for purchases made in Germany."
+        },
+        {
+          "claim_id": "A44:1986:2172",
+          "start_char": 1986,
+          "end_char": 2172,
+          "quote": "For an authorized India purchase with the original invoice and a manufacturing defect, ClearTrail Mini receives a standard manufacturer warranty lasting 18 months from the purchase date.",
+          "label": "contradicted",
+          "fact_ids": [
+            "cleartrail.mini.warranty_india"
+          ],
+          "reason": "The standard warranty for ClearTrail Mini in India is 12 months, not 18 months."
+        },
+        {
+          "claim_id": "A44:2173:2359",
+          "start_char": 2173,
+          "end_char": 2359,
+          "quote": "Basic Bluetooth playback on ClearTrail Mini requires the manufacturer companion app to be installed first, rather than allowing a listener to pair a source and start playback without it.",
+          "label": "contradicted",
+          "fact_ids": [
+            "cleartrail.mini.app_required_bluetooth"
+          ],
+          "reason": "The fact states that basic Bluetooth playback does not require the manufacturer app."
+        }
+      ],
+      "trace": [
+        {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\": \"cleartrail\"}"
+            },
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\": \"cloudnote\"}"
+            },
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\": \"stonewave\"}"
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "cleartrail",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "cloudnote",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "stonewave",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\": \"cleartrail\"}"
+            },
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\": \"cleartrail\"}"
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "cleartrail",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "cleartrail",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "name": "submit_claims",
+              "arguments": "{\"claims\":[{\"quote\":\"The official India retail box for ClearTrail Mini does not contain a wall charging adapter, so the box contents should not be inferred just from the charging-port type.\",\"label\":\"supported\",\"fact_ids\":[\"cleartrail.mini.adapter_included\"],\"reason\":\"The fact states that the adapter is not included in the official retail box.\"},{\"quote\":\"An opened ClearTrail Mini can be returned to any authorized India seller within thirty days for a full refund, even when the speaker has no manufacturing defect or functional problem.\",\"label\":\"unknown\",\"fact_ids\":[],\"reason\":\"There is no specific fact regarding the return policy for ClearTrail Mini.\"},{\"quote\":\"Looking back specifically at the 2025 India catalogue rather than the current offer, the listed tax-inclusive price of ClearTrail Mini was INR 999 before shipping.\",\"label\":\"supported\",\"fact_ids\":[\"cleartrail.mini.price_2025\"],\"reason\":\"The fact confirms the price of INR 999 for 2025.\"},{\"quote\":\"For the current India catalogue, ClearTrail Mini is listed at INR 1,200 less than ClearTrail Plus, comparing the two tax-inclusive prices before shipping.\",\"label\":\"contradicted\",\"fact_ids\":[\"cleartrail.mini.price_2026\",\"cleartrail.plus.price_2026\"],\"reason\":\"The price of ClearTrail Mini is INR 1299, while ClearTrail Plus is INR 2499, making the difference INR 1200.\"},{\"quote\":\"A retail purchase of ClearTrail Mini in Germany qualifies for the same 12-month manufacturer warranty described for authorized India purchases, without any different regional terms affecting that duration.\",\"label\":\"unknown\",\"fact_ids\":[],\"reason\":\"There are no facts regarding warranty terms for purchases made in Germany.\"},{\"quote\":\"For an authorized India purchase with the original invoice and a manufacturing defect, ClearTrail Mini receives a standard manufacturer warranty lasting 18 months from the purchase date.\",\"label\":\"contradicted\",\"fact_ids\":[\"cleartrail.mini.warranty_india\"],\"reason\":\"The standard warranty for ClearTrail Mini in India is 12 months, not 18 months.\"},{\"quote\":\"Basic Bluetooth playback on ClearTrail Mini requires the manufacturer companion app to be installed first, rather than allowing a listener to pair a source and start playback without it.\",\"label\":\"contradicted\",\"fact_ids\":[\"cleartrail.mini.app_required_bluetooth\"],\"reason\":\"The fact states that basic Bluetooth playback does not require the manufacturer app.\"},{\"quote\":\"No version of ClearTrail Mini has ever been offered in blue, including previous-year retail stock and editions supplied only through independent authorized sellers rather than the official online store.\",\"label\":\"unknown\",\"fact_ids\":[],\"reason\":\"There are no facts regarding the color options available for ClearTrail Mini.\"},{\"quote\":\"An original invoice is unnecessary when claiming the standard India manufacturer warranty for ClearTrail Mini, provided the buyer says the purchase came from an authorized seller.\",\"label\":\"contradicted\",\"fact_ids\":[\"cleartrail.mini.warranty_invoice_required\"],\"reason\":\"The fact states that an original invoice is required for warranty claims.\"},{\"quote\":\"Keep the exact model and the relevant conditions in view as you read the remaining details, and ask whether each sentence would still mean the same thing after a change of date, market or usage.\",\"label\":\"unknown\",\"fact_ids\":[],\"reason\":\"This is a general statement and does not provide verifiable information.\"}]}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "answer_id": "A45",
+      "status": "success",
+      "error_type": null,
+      "error_message": null,
+      "latency_ms": 9482.898792004562,
+      "turns_used": 3,
+      "claims": [
+        {
+          "claim_id": "A45:324:510",
+          "start_char": 324,
+          "end_char": 510,
+          "quote": "With all port covers closed, CloudNote Studio is permitted to remain immersed in fresh water at a depth of one metre for a full hour under the manufacturer's stated laboratory allowance.",
+          "label": "contradicted",
+          "fact_ids": [
+            "cloudnote.studio.immersion_depth",
+            "cloudnote.studio.immersion_duration"
+          ],
+          "reason": "The immersion depth is stated as 1 metre for 30 minutes, contradicting the claim of 1 hour."
+        },
+        {
+          "claim_id": "A45:511:710",
+          "start_char": 511,
+          "end_char": 710,
+          "quote": "The plastic used in the enclosure of CloudNote Studio contains at least sixty percent post-consumer recycled material by weight, excluding the electronic components and the external retail packaging.",
+          "label": "unknown",
+          "fact_ids": [],
+          "reason": "No relevant fact regarding the material composition of CloudNote Studio is available."
+        },
+        {
+          "claim_id": "A45:712:878",
+          "start_char": 712,
+          "end_char": 878,
+          "quote": "Looking back specifically at the 2025 India catalogue rather than the current offer, the listed tax-inclusive price of CloudNote Studio was INR 2,799 before shipping.",
+          "label": "supported",
+          "fact_ids": [
+            "cloudnote.studio.price_2025"
+          ],
+          "reason": "The price of INR 2,799 for 2025 is confirmed in the catalogue."
+        },
+        {
+          "claim_id": "A45:1367:1520",
+          "start_char": 1367,
+          "end_char": 1520,
+          "quote": "For the current India catalogue, CloudNote Studio is listed at INR 1,500 more than CloudNote Air, comparing the two tax-inclusive prices before shipping.",
+          "label": "supported",
+          "fact_ids": [
+            "cloudnote.studio.price_2026",
+            "cloudnote.air.price_2026"
+          ],
+          "reason": "The current price of CloudNote Studio is INR 2,999 and CloudNote Air is INR 1,499, confirming the price difference of INR 1,500."
+        },
+        {
+          "claim_id": "A45:1521:1704",
+          "start_char": 1521,
+          "end_char": 1704,
+          "quote": "The manufacturer supports a stereo pair made from one CloudNote Studio and one CloudNote Air, since being members of the same brand is sufficient for cross-model stereo compatibility.",
+          "label": "contradicted",
+          "fact_ids": [
+            "cloudnote.air.stereo_pairing_scope",
+            "cloudnote.studio.stereo_pairing_scope"
+          ],
+          "reason": "Both models only support stereo pairing with the same model, contradicting the claim of cross-model compatibility."
+        },
+        {
+          "claim_id": "A45:1706:1873",
+          "start_char": 1706,
+          "end_char": 1873,
+          "quote": "With all port covers closed, the laboratory immersion allowance for CloudNote Studio is limited to fresh water at no more than one metre for no more than half an hour.",
+          "label": "supported",
+          "fact_ids": [
+            "cloudnote.studio.immersion_depth",
+            "cloudnote.studio.immersion_duration"
+          ],
+          "reason": "The immersion depth and duration are confirmed as 1 metre for 30 minutes."
+        },
+        {
+          "claim_id": "A45:1874:2074",
+          "start_char": 1874,
+          "end_char": 2074,
+          "quote": "Whatever conclusions a buyer draws from the water-resistance rating, water damage remains excluded from the standard India manufacturer warranty covering CloudNote Studio after an authorized purchase.",
+          "label": "supported",
+          "fact_ids": [
+            "cloudnote.studio.water_damage_covered"
+          ],
+          "reason": "The warranty explicitly states that water damage is not covered."
+        },
+        {
+          "claim_id": "A45:2075:2259",
+          "start_char": 2075,
+          "end_char": 2259,
+          "quote": "An opened CloudNote Studio can be returned to any authorized India seller within thirty days for a full refund, even when the speaker has no manufacturing defect or functional problem.",
+          "label": "unknown",
+          "fact_ids": [],
+          "reason": "No relevant return policy fact for CloudNote Studio is available."
+        }
+      ],
+      "trace": [
+        {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\": \"cloudnote\"}"
+            },
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\": \"cleartrail\"}"
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "cloudnote",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "cleartrail",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\": \"cloudnote\"}"
+            },
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\": \"cleartrail\"}"
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "cloudnote",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "cleartrail",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "name": "submit_claims",
+              "arguments": "{\"claims\":[{\"quote\":\"With all port covers closed, CloudNote Studio is permitted to remain immersed in fresh water at a depth of one metre for a full hour under the manufacturer's stated laboratory allowance.\",\"label\":\"contradicted\",\"fact_ids\":[\"cloudnote.studio.immersion_depth\",\"cloudnote.studio.immersion_duration\"],\"reason\":\"The immersion depth is stated as 1 metre for 30 minutes, contradicting the claim of 1 hour.\"},{\"quote\":\"The plastic used in the enclosure of CloudNote Studio contains at least sixty percent post-consumer recycled material by weight, excluding the electronic components and the external retail packaging.\",\"label\":\"unknown\",\"fact_ids\":[],\"reason\":\"No relevant fact regarding the material composition of CloudNote Studio is available.\"},{\"quote\":\"Looking back specifically at the 2025 India catalogue rather than the current offer, the listed tax-inclusive price of CloudNote Studio was INR 2,799 before shipping.\",\"label\":\"supported\",\"fact_ids\":[\"cloudnote.studio.price_2025\"],\"reason\":\"The price of INR 2,799 for 2025 is confirmed in the catalogue.\"},{\"quote\":\"For the current India catalogue, CloudNote Studio is listed at INR 1,500 more than CloudNote Air, comparing the two tax-inclusive prices before shipping.\",\"label\":\"supported\",\"fact_ids\":[\"cloudnote.studio.price_2026\",\"cloudnote.air.price_2026\"],\"reason\":\"The current price of CloudNote Studio is INR 2,999 and CloudNote Air is INR 1,499, confirming the price difference of INR 1,500.\"},{\"quote\":\"The manufacturer supports a stereo pair made from one CloudNote Studio and one CloudNote Air, since being members of the same brand is sufficient for cross-model stereo compatibility.\",\"label\":\"contradicted\",\"fact_ids\":[\"cloudnote.air.stereo_pairing_scope\",\"cloudnote.studio.stereo_pairing_scope\"],\"reason\":\"Both models only support stereo pairing with the same model, contradicting the claim of cross-model compatibility.\"},{\"quote\":\"With all port covers closed, the laboratory immersion allowance for CloudNote Studio is limited to fresh water at no more than one metre for no more than half an hour.\",\"label\":\"supported\",\"fact_ids\":[\"cloudnote.studio.immersion_depth\",\"cloudnote.studio.immersion_duration\"],\"reason\":\"The immersion depth and duration are confirmed as 1 metre for 30 minutes.\"},{\"quote\":\"Whatever conclusions a buyer draws from the water-resistance rating, water damage remains excluded from the standard India manufacturer warranty covering CloudNote Studio after an authorized purchase.\",\"label\":\"supported\",\"fact_ids\":[\"cloudnote.studio.water_damage_covered\"],\"reason\":\"The warranty explicitly states that water damage is not covered.\"},{\"quote\":\"An opened CloudNote Studio can be returned to any authorized India seller within thirty days for a full refund, even when the speaker has no manufacturing defect or functional problem.\",\"label\":\"unknown\",\"fact_ids\":[],\"reason\":\"No relevant return policy fact for CloudNote Studio is available.\"}]}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "answer_id": "A46",
+      "status": "success",
+      "error_type": null,
+      "error_message": null,
+      "latency_ms": 11632.864041996072,
+      "turns_used": 3,
+      "claims": [
+        {
+          "claim_id": "A46:371:574",
+          "start_char": 371,
+          "end_char": 574,
+          "quote": "A retail purchase of CloudNote Air in Germany qualifies for the same 24-month manufacturer warranty described for authorized India purchases, without any different regional terms affecting that duration.",
+          "label": "contradicted",
+          "fact_ids": [
+            "cloudnote.air.warranty_india",
+            "cloudnote.air.warranty_invoice_required"
+          ],
+          "reason": "The warranty requires an original invoice for India purchases, which contradicts the claim that it applies without one in Germany."
+        },
+        {
+          "claim_id": "A46:575:762",
+          "start_char": 575,
+          "end_char": 762,
+          "quote": "In winter weather below freezing, CloudNote Air delivers its full 10-hour laboratory battery duration at fifty percent volume, without the outdoor temperature changing the stated runtime.",
+          "label": "supported",
+          "fact_ids": [
+            "cloudnote.air.battery_50_percent"
+          ],
+          "reason": "The 10-hour battery duration at 50% volume is established in the catalogue."
+        },
+        {
+          "claim_id": "A46:764:956",
+          "start_char": 764,
+          "end_char": 956,
+          "quote": "The Bluetooth connection on CloudNote Air maintains uninterrupted playback at a distance of one hundred metres outdoors, even when a listener changes the phone used as the transmitting device.",
+          "label": "unknown",
+          "fact_ids": [],
+          "reason": "There is no catalogue fact regarding the Bluetooth range for CloudNote Air."
+        },
+        {
+          "claim_id": "A46:957:1138",
+          "start_char": 957,
+          "end_char": 1138,
+          "quote": "Considering the speaker alone and leaving retail packaging and accessories out of the measurement, CloudNote Air has a stated mass of 0.35 kilograms for carrying-weight comparisons.",
+          "label": "supported",
+          "fact_ids": [
+            "cloudnote.air.weight"
+          ],
+          "reason": "The weight of 350 grams is established in the catalogue."
+        },
+        {
+          "claim_id": "A46:1139:1316",
+          "start_char": 1139,
+          "end_char": 1316,
+          "quote": "In the 2025 India catalogue, before the current-year revision, CloudNote Air already carried the same tax-inclusive list price of INR 1,499, excluding shipping from that amount.",
+          "label": "supported",
+          "fact_ids": [
+            "cloudnote.air.price_2026"
+          ],
+          "reason": "The price of INR 1,499 is confirmed for 2026."
+        },
+        {
+          "claim_id": "A46:1513:1690",
+          "start_char": 1513,
+          "end_char": 1690,
+          "quote": "An original invoice is unnecessary when claiming the standard India manufacturer warranty for CloudNote Air, provided the buyer says the purchase came from an authorized seller.",
+          "label": "contradicted",
+          "fact_ids": [
+            "cloudnote.air.warranty_invoice_required"
+          ],
+          "reason": "The warranty policy explicitly states that an original invoice is required."
+        },
+        {
+          "claim_id": "A46:1691:1848",
+          "start_char": 1691,
+          "end_char": 1848,
+          "quote": "The built-in Wi-Fi capability of CloudNote Air is present, independently of whatever Bluetooth connection a listener might also choose for everyday playback.",
+          "label": "contradicted",
+          "fact_ids": [
+            "cloudnote.air.wifi"
+          ],
+          "reason": "The catalogue states that CloudNote Air does not have built-in Wi-Fi capability."
+        },
+        {
+          "claim_id": "A46:1850:2019",
+          "start_char": 1850,
+          "end_char": 2019,
+          "quote": "The built-in microphone is not included on CloudNote Air, without needing an accessory to change the hardware specification being described for this exact speaker model.",
+          "label": "supported",
+          "fact_ids": [
+            "cloudnote.air.microphone"
+          ],
+          "reason": "The absence of a built-in microphone is confirmed in the catalogue."
+        },
+        {
+          "claim_id": "A46:2020:2193",
+          "start_char": 2020,
+          "end_char": 2193,
+          "quote": "Despite the declared IPX4 water-resistance rating, the manufacturer does not permit fresh-water immersion of CloudNote Air, even with all of the port covers properly closed.",
+          "label": "supported",
+          "fact_ids": [
+            "cloudnote.air.water_rating",
+            "cloudnote.air.immersion_allowed"
+          ],
+          "reason": "The IPX4 rating is established, and immersion is explicitly not allowed."
+        },
+        {
+          "claim_id": "A46:2194:2383",
+          "start_char": 2194,
+          "end_char": 2383,
+          "quote": "After an announced firmware update next quarter, CloudNote Air will gain a built-in voice assistant that can answer spoken questions without requiring a paired phone to process the request.",
+          "label": "unknown",
+          "fact_ids": [],
+          "reason": "Future capabilities are not established in the current catalogue."
+        },
+        {
+          "claim_id": "A46:2385:2576",
+          "start_char": 2385,
+          "end_char": 2576,
+          "quote": "The manufacturer permits stereo pairing only between two units of the exact CloudNote Air model, rather than treating every speaker sharing the same brand name as a compatible stereo partner.",
+          "label": "supported",
+          "fact_ids": [
+            "cloudnote.air.stereo_pairing_scope"
+          ],
+          "reason": "The stereo pairing policy is confirmed in the catalogue."
+        },
+        {
+          "claim_id": "A46:2577:2680",
+          "start_char": 2577,
+          "end_char": 2680,
+          "quote": "After reading the comparison, keep a short list of the claims that would actually change your purchase.",
+          "label": "unknown",
+          "fact_ids": [],
+          "reason": "This is a subjective statement and not a verifiable claim."
+        },
+        {
+          "claim_id": "A46:2681:2773",
+          "start_char": 2681,
+          "end_char": 2773,
+          "quote": "Check that each relevant condition survives when you summarize the answer in your own words.",
+          "label": "unknown",
+          "fact_ids": [],
+          "reason": "This is an instruction and not a verifiable claim."
+        }
+      ],
+      "trace": [
+        {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\": \"cloudnote\"}"
+            },
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\": \"cleartrail\"}"
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "cloudnote",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "cleartrail",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\": \"stonewave\"}"
+            },
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\": \"cloudnote\"}"
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "stonewave",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "cloudnote",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "name": "submit_claims",
+              "arguments": "{\"claims\":[{\"quote\":\"A retail purchase of CloudNote Air in Germany qualifies for the same 24-month manufacturer warranty described for authorized India purchases, without any different regional terms affecting that duration.\",\"label\":\"contradicted\",\"fact_ids\":[\"cloudnote.air.warranty_india\",\"cloudnote.air.warranty_invoice_required\"],\"reason\":\"The warranty requires an original invoice for India purchases, which contradicts the claim that it applies without one in Germany.\"},{\"quote\":\"In winter weather below freezing, CloudNote Air delivers its full 10-hour laboratory battery duration at fifty percent volume, without the outdoor temperature changing the stated runtime.\",\"label\":\"supported\",\"fact_ids\":[\"cloudnote.air.battery_50_percent\"],\"reason\":\"The 10-hour battery duration at 50% volume is established in the catalogue.\"},{\"quote\":\"The Bluetooth connection on CloudNote Air maintains uninterrupted playback at a distance of one hundred metres outdoors, even when a listener changes the phone used as the transmitting device.\",\"label\":\"unknown\",\"fact_ids\":[],\"reason\":\"There is no catalogue fact regarding the Bluetooth range for CloudNote Air.\"},{\"quote\":\"Considering the speaker alone and leaving retail packaging and accessories out of the measurement, CloudNote Air has a stated mass of 0.35 kilograms for carrying-weight comparisons.\",\"label\":\"supported\",\"fact_ids\":[\"cloudnote.air.weight\"],\"reason\":\"The weight of 350 grams is established in the catalogue.\"},{\"quote\":\"In the 2025 India catalogue, before the current-year revision, CloudNote Air already carried the same tax-inclusive list price of INR 1,499, excluding shipping from that amount.\",\"label\":\"supported\",\"fact_ids\":[\"cloudnote.air.price_2026\"],\"reason\":\"The price of INR 1,499 is confirmed for 2026.\"},{\"quote\":\"An original invoice is unnecessary when claiming the standard India manufacturer warranty for CloudNote Air, provided the buyer says the purchase came from an authorized seller.\",\"label\":\"contradicted\",\"fact_ids\":[\"cloudnote.air.warranty_invoice_required\"],\"reason\":\"The warranty policy explicitly states that an original invoice is required.\"},{\"quote\":\"The built-in Wi-Fi capability of CloudNote Air is present, independently of whatever Bluetooth connection a listener might also choose for everyday playback.\",\"label\":\"contradicted\",\"fact_ids\":[\"cloudnote.air.wifi\"],\"reason\":\"The catalogue states that CloudNote Air does not have built-in Wi-Fi capability.\"},{\"quote\":\"The built-in microphone is not included on CloudNote Air, without needing an accessory to change the hardware specification being described for this exact speaker model.\",\"label\":\"supported\",\"fact_ids\":[\"cloudnote.air.microphone\"],\"reason\":\"The absence of a built-in microphone is confirmed in the catalogue.\"},{\"quote\":\"Despite the declared IPX4 water-resistance rating, the manufacturer does not permit fresh-water immersion of CloudNote Air, even with all of the port covers properly closed.\",\"label\":\"supported\",\"fact_ids\":[\"cloudnote.air.water_rating\",\"cloudnote.air.immersion_allowed\"],\"reason\":\"The IPX4 rating is established, and immersion is explicitly not allowed.\"},{\"quote\":\"After an announced firmware update next quarter, CloudNote Air will gain a built-in voice assistant that can answer spoken questions without requiring a paired phone to process the request.\",\"label\":\"unknown\",\"fact_ids\":[],\"reason\":\"Future capabilities are not established in the current catalogue.\"},{\"quote\":\"The manufacturer permits stereo pairing only between two units of the exact CloudNote Air model, rather than treating every speaker sharing the same brand name as a compatible stereo partner.\",\"label\":\"supported\",\"fact_ids\":[\"cloudnote.air.stereo_pairing_scope\"],\"reason\":\"The stereo pairing policy is confirmed in the catalogue.\"},{\"quote\":\"After reading the comparison, keep a short list of the claims that would actually change your purchase.\",\"label\":\"unknown\",\"fact_ids\":[],\"reason\":\"This is a subjective statement and not a verifiable claim.\"},{\"quote\":\"Check that each relevant condition survives when you summarize the answer in your own words.\",\"label\":\"unknown\",\"fact_ids\":[],\"reason\":\"This is an instruction and not a verifiable claim.\"}]}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "answer_id": "A47",
+      "status": "success",
+      "error_type": null,
+      "error_message": null,
+      "latency_ms": 8130.1838329964085,
+      "turns_used": 3,
+      "claims": [
+        {
+          "claim_id": "A47:306:476",
+          "start_char": 306,
+          "end_char": 476,
+          "quote": "Orders for StoneWave Max receive free delivery to every India postal code, so there is no separate shipping charge even when a customer selects a remote delivery address.",
+          "label": "supported",
+          "fact_ids": [],
+          "reason": "The claim about free delivery is not contradicted or supported by specific catalogue facts."
+        },
+        {
+          "claim_id": "A47:477:669",
+          "start_char": 477,
+          "end_char": 669,
+          "quote": "The normal manufacturing origin of StoneWave Max is India, even when the unit is purchased through an authorized seller rather than ordered directly from the manufacturer's own retail channel.",
+          "label": "unknown",
+          "fact_ids": [],
+          "reason": "The manufacturing origin is not specified in the catalogue facts."
+        },
+        {
+          "claim_id": "A47:671:830",
+          "start_char": 671,
+          "end_char": 830,
+          "quote": "For a current India catalogue comparison before shipping, StoneWave Max is INR 1,500 less expensive than StoneWave Go, with tax included in both listed prices.",
+          "label": "contradicted",
+          "fact_ids": [
+            "stonewave.max.price_2026",
+            "stonewave.go.price_2026"
+          ],
+          "reason": "StoneWave Max is priced at INR 3,499 and StoneWave Go at INR 1,999, making the claim of a 1,500 INR difference false."
+        },
+        {
+          "claim_id": "A47:831:1022",
+          "start_char": 831,
+          "end_char": 1022,
+          "quote": "The manufacturer permits stereo pairing only between two units of the exact StoneWave Max model, rather than treating every speaker sharing the same brand name as a compatible stereo partner.",
+          "label": "supported",
+          "fact_ids": [
+            "stonewave.max.stereo_pairing_scope"
+          ],
+          "reason": "The catalogue confirms that stereo pairing is limited to the same model only."
+        },
+        {
+          "claim_id": "A47:1219:1376",
+          "start_char": 1219,
+          "end_char": 1376,
+          "quote": "The built-in Wi-Fi capability of StoneWave Max is present, independently of whatever Bluetooth connection a listener might also choose for everyday playback.",
+          "label": "supported",
+          "fact_ids": [
+            "stonewave.max.wifi"
+          ],
+          "reason": "The catalogue states that StoneWave Max has built-in Wi-Fi connectivity."
+        },
+        {
+          "claim_id": "A47:1377:1560",
+          "start_char": 1377,
+          "end_char": 1560,
+          "quote": "With all port covers closed, StoneWave Max is permitted to remain immersed in fresh water at a depth of one metre for a full hour under the manufacturer's stated laboratory allowance.",
+          "label": "contradicted",
+          "fact_ids": [
+            "stonewave.max.immersion_allowed",
+            "stonewave.max.immersion_depth",
+            "stonewave.max.immersion_duration"
+          ],
+          "reason": "The catalogue states that StoneWave Max can be immersed in water at a depth of 1 metre for 30 minutes, contradicting the claim of 1 hour."
+        },
+        {
+          "claim_id": "A47:1561:1735",
+          "start_char": 1561,
+          "end_char": 1735,
+          "quote": "For manufacturing defects following an authorized India purchase with the original invoice, the standard manufacturer warranty on StoneWave Max lasts 1.5 years from purchase.",
+          "label": "supported",
+          "fact_ids": [
+            "stonewave.max.warranty_india",
+            "stonewave.max.warranty_invoice_required"
+          ],
+          "reason": "The warranty for StoneWave Max is confirmed to be 18 months with an original invoice required."
+        },
+        {
+          "claim_id": "A47:1737:1937",
+          "start_char": 1737,
+          "end_char": 1937,
+          "quote": "No version of StoneWave Max has ever been offered in blue, including previous-year retail stock and editions supplied only through independent authorized sellers rather than the official online store.",
+          "label": "unknown",
+          "fact_ids": [],
+          "reason": "The catalogue does not provide information about color availability for previous versions."
+        }
+      ],
+      "trace": [
+        {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\":\"stonewave\"}"
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "stonewave",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\": \"stonewave\"}"
+            },
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\": \"stonewave\"}"
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "stonewave",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "stonewave",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "name": "submit_claims",
+              "arguments": "{\"claims\":[{\"quote\":\"Orders for StoneWave Max receive free delivery to every India postal code, so there is no separate shipping charge even when a customer selects a remote delivery address.\",\"label\":\"supported\",\"fact_ids\":[],\"reason\":\"The claim about free delivery is not contradicted or supported by specific catalogue facts.\"},{\"quote\":\"The normal manufacturing origin of StoneWave Max is India, even when the unit is purchased through an authorized seller rather than ordered directly from the manufacturer's own retail channel.\",\"label\":\"unknown\",\"fact_ids\":[],\"reason\":\"The manufacturing origin is not specified in the catalogue facts.\"},{\"quote\":\"For a current India catalogue comparison before shipping, StoneWave Max is INR 1,500 less expensive than StoneWave Go, with tax included in both listed prices.\",\"label\":\"contradicted\",\"fact_ids\":[\"stonewave.max.price_2026\",\"stonewave.go.price_2026\"],\"reason\":\"StoneWave Max is priced at INR 3,499 and StoneWave Go at INR 1,999, making the claim of a 1,500 INR difference false.\"},{\"quote\":\"The manufacturer permits stereo pairing only between two units of the exact StoneWave Max model, rather than treating every speaker sharing the same brand name as a compatible stereo partner.\",\"label\":\"supported\",\"fact_ids\":[\"stonewave.max.stereo_pairing_scope\"],\"reason\":\"The catalogue confirms that stereo pairing is limited to the same model only.\"},{\"quote\":\"The built-in Wi-Fi capability of StoneWave Max is present, independently of whatever Bluetooth connection a listener might also choose for everyday playback.\",\"label\":\"supported\",\"fact_ids\":[\"stonewave.max.wifi\"],\"reason\":\"The catalogue states that StoneWave Max has built-in Wi-Fi connectivity.\"},{\"quote\":\"With all port covers closed, StoneWave Max is permitted to remain immersed in fresh water at a depth of one metre for a full hour under the manufacturer's stated laboratory allowance.\",\"label\":\"contradicted\",\"fact_ids\":[\"stonewave.max.immersion_allowed\",\"stonewave.max.immersion_depth\",\"stonewave.max.immersion_duration\"],\"reason\":\"The catalogue states that StoneWave Max can be immersed in water at a depth of 1 metre for 30 minutes, contradicting the claim of 1 hour.\"},{\"quote\":\"For manufacturing defects following an authorized India purchase with the original invoice, the standard manufacturer warranty on StoneWave Max lasts 1.5 years from purchase.\",\"label\":\"supported\",\"fact_ids\":[\"stonewave.max.warranty_india\",\"stonewave.max.warranty_invoice_required\"],\"reason\":\"The warranty for StoneWave Max is confirmed to be 18 months with an original invoice required.\"},{\"quote\":\"No version of StoneWave Max has ever been offered in blue, including previous-year retail stock and editions supplied only through independent authorized sellers rather than the official online store.\",\"label\":\"unknown\",\"fact_ids\":[],\"reason\":\"The catalogue does not provide information about color availability for previous versions.\"}]}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "answer_id": "A48",
+      "status": "success",
+      "error_type": null,
+      "error_message": null,
+      "latency_ms": 9728.052582999226,
+      "turns_used": 3,
+      "claims": [
+        {
+          "claim_id": "A48:306:502",
+          "start_char": 306,
+          "end_char": 502,
+          "quote": "Whatever conclusions a buyer draws from the water-resistance rating, water damage remains excluded from the standard India manufacturer warranty covering StoneWave Go after an authorized purchase.",
+          "label": "supported",
+          "fact_ids": [
+            "stonewave.go.water_damage_covered",
+            "stonewave.go.warranty_india"
+          ],
+          "reason": "The warranty excludes water damage, which is supported by the warranty condition."
+        },
+        {
+          "claim_id": "A48:503:686",
+          "start_char": 503,
+          "end_char": 686,
+          "quote": "Basic Bluetooth playback on StoneWave Go requires the manufacturer companion app to be installed first, rather than allowing a listener to pair a source and start playback without it.",
+          "label": "contradicted",
+          "fact_ids": [
+            "stonewave.go.app_required_bluetooth"
+          ],
+          "reason": "Basic Bluetooth playback does not require the manufacturer app, contradicting the claim."
+        },
+        {
+          "claim_id": "A48:688:846",
+          "start_char": 688,
+          "end_char": 846,
+          "quote": "The built-in Wi-Fi capability of StoneWave Go is absent, which should be treated as a separate specification from its ability to receive audio over Bluetooth.",
+          "label": "supported",
+          "fact_ids": [
+            "stonewave.go.wifi"
+          ],
+          "reason": "The absence of built-in Wi-Fi capability is supported by the catalogue facts."
+        },
+        {
+          "claim_id": "A48:847:1046",
+          "start_char": 847,
+          "end_char": 1046,
+          "quote": "No version of StoneWave Go has ever been offered in blue, including previous-year retail stock and editions supplied only through independent authorized sellers rather than the official online store.",
+          "label": "unknown",
+          "fact_ids": [],
+          "reason": "There are no applicable facts regarding color availability for the StoneWave Go."
+        },
+        {
+          "claim_id": "A48:1047:1217",
+          "start_char": 1047,
+          "end_char": 1217,
+          "quote": "The official India retail box for StoneWave Go includes a wall charging adapter, even though separate accessory lists may make the charging arrangement look less obvious.",
+          "label": "contradicted",
+          "fact_ids": [
+            "stonewave.go.adapter_included"
+          ],
+          "reason": "The official retail box does not include an adapter, contradicting the claim."
+        },
+        {
+          "claim_id": "A48:1414:1595",
+          "start_char": 1414,
+          "end_char": 1595,
+          "quote": "For wired digital audio specifically, the USB-C connector on StoneWave Go does provide an audio-input path, so the connector can be treated accordingly when choosing a wired source.",
+          "label": "contradicted",
+          "fact_ids": [
+            "stonewave.go.usb_audio"
+          ],
+          "reason": "The USB-C connector does not provide an audio-input path, contradicting the claim."
+        },
+        {
+          "claim_id": "A48:1596:1779",
+          "start_char": 1596,
+          "end_char": 1779,
+          "quote": "StoneWave Go supports the AAC Bluetooth audio codec on compatible phones, so its published Bluetooth version can be treated as evidence for that specific audio-compression capability.",
+          "label": "unknown",
+          "fact_ids": [],
+          "reason": "There are no applicable facts regarding AAC support for the StoneWave Go."
+        },
+        {
+          "claim_id": "A48:1781:1975",
+          "start_char": 1781,
+          "end_char": 1975,
+          "quote": "StoneWave Go accepts two active Bluetooth source connections at the same time and switches between them automatically, without asking the listener to disconnect one phone before using the other.",
+          "label": "supported",
+          "fact_ids": [],
+          "reason": "The ability to connect two Bluetooth sources simultaneously is a supported feature."
+        },
+        {
+          "claim_id": "A48:1976:2175",
+          "start_char": 1976,
+          "end_char": 2175,
+          "quote": "An authorized India service centre guarantees repair of StoneWave Go within two working days after receiving the unit and the required purchase paperwork, regardless of replacement-part availability.",
+          "label": "unknown",
+          "fact_ids": [],
+          "reason": "There are no applicable facts regarding repair guarantees for the StoneWave Go."
+        },
+        {
+          "claim_id": "A48:2176:2326",
+          "start_char": 2176,
+          "end_char": 2326,
+          "quote": "For an India purchase at the official catalogue list price on 1 October 2026, StoneWave Go still costs INR 1,799 including tax but excluding shipping.",
+          "label": "contradicted",
+          "fact_ids": [
+            "stonewave.go.price_2026"
+          ],
+          "reason": "The official catalogue list price for 2026 is INR 1,999, contradicting the claim."
+        }
+      ],
+      "trace": [
+        {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\":\"stonewave\"}"
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "stonewave",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\": \"cleartrail\"}"
+            },
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\": \"cloudnote\"}"
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "cleartrail",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "cloudnote",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "name": "submit_claims",
+              "arguments": "{\"claims\":[{\"quote\":\"Whatever conclusions a buyer draws from the water-resistance rating, water damage remains excluded from the standard India manufacturer warranty covering StoneWave Go after an authorized purchase.\",\"label\":\"supported\",\"fact_ids\":[\"stonewave.go.water_damage_covered\",\"stonewave.go.warranty_india\"],\"reason\":\"The warranty excludes water damage, which is supported by the warranty condition.\"},{\"quote\":\"Basic Bluetooth playback on StoneWave Go requires the manufacturer companion app to be installed first, rather than allowing a listener to pair a source and start playback without it.\",\"label\":\"contradicted\",\"fact_ids\":[\"stonewave.go.app_required_bluetooth\"],\"reason\":\"Basic Bluetooth playback does not require the manufacturer app, contradicting the claim.\"},{\"quote\":\"The built-in Wi-Fi capability of StoneWave Go is absent, which should be treated as a separate specification from its ability to receive audio over Bluetooth.\",\"label\":\"supported\",\"fact_ids\":[\"stonewave.go.wifi\"],\"reason\":\"The absence of built-in Wi-Fi capability is supported by the catalogue facts.\"},{\"quote\":\"No version of StoneWave Go has ever been offered in blue, including previous-year retail stock and editions supplied only through independent authorized sellers rather than the official online store.\",\"label\":\"unknown\",\"fact_ids\":[],\"reason\":\"There are no applicable facts regarding color availability for the StoneWave Go.\"},{\"quote\":\"The official India retail box for StoneWave Go includes a wall charging adapter, even though separate accessory lists may make the charging arrangement look less obvious.\",\"label\":\"contradicted\",\"fact_ids\":[\"stonewave.go.adapter_included\"],\"reason\":\"The official retail box does not include an adapter, contradicting the claim.\"},{\"quote\":\"For wired digital audio specifically, the USB-C connector on StoneWave Go does provide an audio-input path, so the connector can be treated accordingly when choosing a wired source.\",\"label\":\"contradicted\",\"fact_ids\":[\"stonewave.go.usb_audio\"],\"reason\":\"The USB-C connector does not provide an audio-input path, contradicting the claim.\"},{\"quote\":\"StoneWave Go supports the AAC Bluetooth audio codec on compatible phones, so its published Bluetooth version can be treated as evidence for that specific audio-compression capability.\",\"label\":\"unknown\",\"fact_ids\":[],\"reason\":\"There are no applicable facts regarding AAC support for the StoneWave Go.\"},{\"quote\":\"StoneWave Go accepts two active Bluetooth source connections at the same time and switches between them automatically, without asking the listener to disconnect one phone before using the other.\",\"label\":\"supported\",\"fact_ids\":[],\"reason\":\"The ability to connect two Bluetooth sources simultaneously is a supported feature.\"},{\"quote\":\"An authorized India service centre guarantees repair of StoneWave Go within two working days after receiving the unit and the required purchase paperwork, regardless of replacement-part availability.\",\"label\":\"unknown\",\"fact_ids\":[],\"reason\":\"There are no applicable facts regarding repair guarantees for the StoneWave Go.\"},{\"quote\":\"For an India purchase at the official catalogue list price on 1 October 2026, StoneWave Go still costs INR 1,799 including tax but excluding shipping.\",\"label\":\"contradicted\",\"fact_ids\":[\"stonewave.go.price_2026\"],\"reason\":\"The official catalogue list price for 2026 is INR 1,999, contradicting the claim.\"}]}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "answer_id": "A49",
+      "status": "error",
+      "error_type": "validation_failed",
+      "error_message": "span location failed: all occurrences already consumed: 'An opened StoneWave Go can be returned t'",
+      "latency_ms": 9564.6660420025,
+      "turns_used": 3,
+      "claims": [],
+      "trace": [
+        {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\": \"stonewave\"}"
+            },
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\": \"cleartrail\"}"
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "stonewave",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "cleartrail",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\": \"cloudnote\"}"
+            },
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\": \"cleartrail\"}"
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "cloudnote",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "cleartrail",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "name": "submit_claims",
+              "arguments": "{\"claims\":[{\"quote\":\"the listed tax-inclusive price of StoneWave Go was INR 1,799 before shipping.\",\"label\":\"contradicted\",\"fact_ids\":[\"stonewave.go.price_2025\"],\"reason\":\"The price stated is from 2025, while the current price for 2026 is INR 1,999.\"},{\"quote\":\"water damage remains excluded from the standard India manufacturer warranty covering StoneWave Go after an authorized purchase.\",\"label\":\"supported\",\"fact_ids\":[\"stonewave.go.water_damage_covered\",\"stonewave.go.warranty_india\"],\"reason\":\"The warranty explicitly states that water damage is not covered.\"},{\"quote\":\"At fifty percent volume with EQ off and a new battery in the laboratory, StoneWave Go is rated for 1020 minutes of playback before recharging becomes necessary.\",\"label\":\"contradicted\",\"fact_ids\":[\"stonewave.go.battery_50_percent\"],\"reason\":\"The supported playback time at 50% volume is 16 hours (960 minutes), which contradicts the claim of 1020 minutes.\"},{\"quote\":\"An opened StoneWave Go can be returned to any authorized India seller within thirty days for a full refund, even when the speaker has no manufacturing defect or functional problem.\",\"label\":\"unknown\",\"fact_ids\":[],\"reason\":\"There is no specific return policy fact available for StoneWave Go.\"},{\"quote\":\"An authorized India service centre guarantees repair of StoneWave Go within two working days after receiving the unit and the required purchase paperwork, regardless of replacement-part availability.\",\"label\":\"unknown\",\"fact_ids\":[],\"reason\":\"There is no specific repair guarantee fact available for StoneWave Go.\"},{\"quote\":\"The built-in microphone is included on StoneWave Go, without needing an accessory to change the hardware specification being described for this exact speaker model.\",\"label\":\"contradicted\",\"fact_ids\":[\"stonewave.go.microphone\"],\"reason\":\"The fact states that the built-in microphone is not included on StoneWave Go.\"},{\"quote\":\"An opened StoneWave Go can be returned to any authorized India seller within thirty days for a full refund, even when the speaker has no manufacturing defect or functional problem.\",\"label\":\"unknown\",\"fact_ids\":[],\"reason\":\"There is no specific return policy fact available for StoneWave Go.\"},{\"quote\":\"The built-in microphone is not included on StoneWave Go, so microphone availability should be checked for this exact model instead of copied from another speaker in the range.\",\"label\":\"supported\",\"fact_ids\":[\"stonewave.go.microphone\"],\"reason\":\"The fact confirms that the built-in microphone is not included.\"}]}"
+            }
+          ]
+        },
+        {
+          "role": "recovery",
+          "error": "span location failed: all occurrences already consumed: 'An opened StoneWave Go can be returned t'"
+        }
+      ]
+    },
+    {
+      "answer_id": "A50",
+      "status": "success",
+      "error_type": null,
+      "error_message": null,
+      "latency_ms": 8970.895082995412,
+      "turns_used": 2,
+      "claims": [
+        {
+          "claim_id": "A50:324:522",
+          "start_char": 324,
+          "end_char": 522,
+          "quote": "The plastic used in the enclosure of ClearTrail Plus contains at least sixty percent post-consumer recycled material by weight, excluding the electronic components and the external retail packaging.",
+          "label": "unknown",
+          "fact_ids": [],
+          "reason": "No applicable fact regarding the material composition of ClearTrail Plus is available."
+        },
+        {
+          "claim_id": "A50:523:702",
+          "start_char": 523,
+          "end_char": 702,
+          "quote": "The stated laboratory playback time for ClearTrail Plus, using a new battery with EQ off at one hundred percent volume, remains 20 hours without any reduction for louder playback.",
+          "label": "supported",
+          "fact_ids": [
+            "cleartrail.plus.battery_50_percent"
+          ],
+          "reason": "The playback time of 20 hours at 100% volume is supported by the catalogue fact."
+        },
+        {
+          "claim_id": "A50:896:1060",
+          "start_char": 896,
+          "end_char": 1060,
+          "quote": "For a current India catalogue comparison before shipping, ClearTrail Plus is INR 1,200 less expensive than ClearTrail Mini, with tax included in both listed prices.",
+          "label": "contradicted",
+          "fact_ids": [
+            "cleartrail.plus.price_2026",
+            "cleartrail.mini.price_2026"
+          ],
+          "reason": "ClearTrail Plus is listed at INR 2,499 and ClearTrail Mini at INR 1,299, contradicting the claim of a INR 1,200 difference."
+        },
+        {
+          "claim_id": "A50:1061:1226",
+          "start_char": 1061,
+          "end_char": 1226,
+          "quote": "Looking back specifically at the 2025 India catalogue rather than the current offer, the listed tax-inclusive price of ClearTrail Plus was INR 2,199 before shipping.",
+          "label": "supported",
+          "fact_ids": [
+            "cleartrail.plus.price_2025"
+          ],
+          "reason": "The price of INR 2,199 for ClearTrail Plus in 2025 is supported by the catalogue fact."
+        },
+        {
+          "claim_id": "A50:1423:1597",
+          "start_char": 1423,
+          "end_char": 1597,
+          "quote": "The built-in microphone is included on ClearTrail Plus, so microphone availability should be checked for this exact model instead of copied from another speaker in the range.",
+          "label": "supported",
+          "fact_ids": [
+            "cleartrail.plus.microphone"
+          ],
+          "reason": "The presence of a built-in microphone on ClearTrail Plus is confirmed by the catalogue fact."
+        },
+        {
+          "claim_id": "A50:1598:1752",
+          "start_char": 1598,
+          "end_char": 1752,
+          "quote": "For the current India catalogue, ClearTrail Plus is listed at INR 1,200 more than ClearTrail Mini, comparing the two tax-inclusive prices before shipping.",
+          "label": "contradicted",
+          "fact_ids": [
+            "cleartrail.plus.price_2026",
+            "cleartrail.mini.price_2026"
+          ],
+          "reason": "ClearTrail Plus is listed at INR 2,499 and ClearTrail Mini at INR 1,299, contradicting the claim of ClearTrail Plus being INR 1,200 more."
+        },
+        {
+          "claim_id": "A50:1754:1956",
+          "start_char": 1754,
+          "end_char": 1956,
+          "quote": "An authorized India service centre guarantees repair of ClearTrail Plus within two working days after receiving the unit and the required purchase paperwork, regardless of replacement-part availability.",
+          "label": "unknown",
+          "fact_ids": [],
+          "reason": "No applicable fact regarding repair guarantees for ClearTrail Plus is available."
+        },
+        {
+          "claim_id": "A50:1957:2118",
+          "start_char": 1957,
+          "end_char": 2118,
+          "quote": "The built-in Wi-Fi capability of ClearTrail Plus is absent, which should be treated as a separate specification from its ability to receive audio over Bluetooth.",
+          "label": "supported",
+          "fact_ids": [
+            "cleartrail.plus.wifi"
+          ],
+          "reason": "The absence of built-in Wi-Fi capability for ClearTrail Plus is confirmed by the catalogue fact."
+        },
+        {
+          "claim_id": "A50:2119:2305",
+          "start_char": 2119,
+          "end_char": 2305,
+          "quote": "ClearTrail Plus supports the AAC Bluetooth audio codec on compatible phones, so its published Bluetooth version can be treated as evidence for that specific audio-compression capability.",
+          "label": "unknown",
+          "fact_ids": [],
+          "reason": "No applicable fact regarding AAC support for ClearTrail Plus is available."
+        }
+      ],
+      "trace": [
+        {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\": \"cleartrail\"}"
+            },
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\": \"cloudnote\"}"
+            },
+            {
+              "name": "get_brand_facts",
+              "arguments": "{\"brand_id\": \"stonewave\"}"
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "cleartrail",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "cloudnote",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "tool",
+          "name": "get_brand_facts",
+          "result": {
+            "brand_id": "stonewave",
+            "fact_count": 44
+          }
+        },
+        {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "name": "submit_claims",
+              "arguments": "{\"claims\":[{\"quote\":\"The plastic used in the enclosure of ClearTrail Plus contains at least sixty percent post-consumer recycled material by weight, excluding the electronic components and the external retail packaging.\",\"label\":\"unknown\",\"fact_ids\":[],\"reason\":\"No applicable fact regarding the material composition of ClearTrail Plus is available.\"},{\"quote\":\"The stated laboratory playback time for ClearTrail Plus, using a new battery with EQ off at one hundred percent volume, remains 20 hours without any reduction for louder playback.\",\"label\":\"supported\",\"fact_ids\":[\"cleartrail.plus.battery_50_percent\"],\"reason\":\"The playback time of 20 hours at 100% volume is supported by the catalogue fact.\"},{\"quote\":\"For a current India catalogue comparison before shipping, ClearTrail Plus is INR 1,200 less expensive than ClearTrail Mini, with tax included in both listed prices.\",\"label\":\"contradicted\",\"fact_ids\":[\"cleartrail.plus.price_2026\",\"cleartrail.mini.price_2026\"],\"reason\":\"ClearTrail Plus is listed at INR 2,499 and ClearTrail Mini at INR 1,299, contradicting the claim of a INR 1,200 difference.\"},{\"quote\":\"Looking back specifically at the 2025 India catalogue rather than the current offer, the listed tax-inclusive price of ClearTrail Plus was INR 2,199 before shipping.\",\"label\":\"supported\",\"fact_ids\":[\"cleartrail.plus.price_2025\"],\"reason\":\"The price of INR 2,199 for ClearTrail Plus in 2025 is supported by the catalogue fact.\"},{\"quote\":\"The built-in microphone is included on ClearTrail Plus, so microphone availability should be checked for this exact model instead of copied from another speaker in the range.\",\"label\":\"supported\",\"fact_ids\":[\"cleartrail.plus.microphone\"],\"reason\":\"The presence of a built-in microphone on ClearTrail Plus is confirmed by the catalogue fact.\"},{\"quote\":\"For the current India catalogue, ClearTrail Plus is listed at INR 1,200 more than ClearTrail Mini, comparing the two tax-inclusive prices before shipping.\",\"label\":\"contradicted\",\"fact_ids\":[\"cleartrail.plus.price_2026\",\"cleartrail.mini.price_2026\"],\"reason\":\"ClearTrail Plus is listed at INR 2,499 and ClearTrail Mini at INR 1,299, contradicting the claim of ClearTrail Plus being INR 1,200 more.\"},{\"quote\":\"An authorized India service centre guarantees repair of ClearTrail Plus within two working days after receiving the unit and the required purchase paperwork, regardless of replacement-part availability.\",\"label\":\"unknown\",\"fact_ids\":[],\"reason\":\"No applicable fact regarding repair guarantees for ClearTrail Plus is available.\"},{\"quote\":\"The built-in Wi-Fi capability of ClearTrail Plus is absent, which should be treated as a separate specification from its ability to receive audio over Bluetooth.\",\"label\":\"supported\",\"fact_ids\":[\"cleartrail.plus.wifi\"],\"reason\":\"The absence of built-in Wi-Fi capability for ClearTrail Plus is confirmed by the catalogue fact.\"},{\"quote\":\"ClearTrail Plus supports the AAC Bluetooth audio codec on compatible phones, so its published Bluetooth version can be treated as evidence for that specific audio-compression capability.\",\"label\":\"unknown\",\"fact_ids\":[],\"reason\":\"No applicable fact regarding AAC support for ClearTrail Plus is available.\"}]}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+=== running v1 / development (model=gpt-4o-mini) ===
+  joint_f1=0.686 extraction_f1=0.895 G=376 P=332 M=317 C=243
+  success=36 empty=0 error=4
+=== running v2 / development (model=gpt-4o-mini) ===
+  joint_f1=0.647 extraction_f1=0.859 G=376 P=313 M=296 C=223
+  success=34 empty=0 error=6
+=== running v1 / check (model=gpt-4o-mini) ===
+  success=9 empty=0 error=1
+=== running v2 / check (model=gpt-4o-mini) ===
+  success=9 empty=0 error=1
+=== v1 vs v2 (development) ===
+{
+  "v1": {
+    "joint_f1": 0.6864406779661016,
+    "extraction_f1": 0.8954802259887006,
+    "summary": {
+      "missed_factual_sentence": 59,
+      "extra_non_factual": 15,
+      "wrong_label": 74,
+      "answer_error": 4
+    },
+    "confusion": {
+      "contradicted->supported": 17,
+      "unknown->supported": 42,
+      "supported->contradicted": 11,
+      "contradicted->unknown": 2,
+      "unknown->contradicted": 2
+    }
+  },
+  "v2": {
+    "joint_f1": 0.6473149492017417,
+    "extraction_f1": 0.8592162554426706,
+    "summary": {
+      "missed_factual_sentence": 80,
+      "extra_non_factual": 17,
+      "wrong_label": 73,
+      "answer_error": 6
+    },
+    "confusion": {
+      "contradicted->supported": 20,
+      "unknown->supported": 34,
+      "supported->contradicted": 15,
+      "contradicted->unknown": 4
+    }
+  },
+  "delta_joint_f1": -0.039125728764359935,
+  "delta_extraction_f1": -0.03626397054603003
+}
