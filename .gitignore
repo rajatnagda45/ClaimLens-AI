@@ -1,0 +1,15 @@
+# Secrets
+.env
+*.key
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+
+# OS
+.DS_Store
+
+# Keep supplied CSVs and reports/ (evidence) tracked.
