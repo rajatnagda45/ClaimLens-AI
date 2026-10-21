@@ -1,21 +1,22 @@
-"""API and persistence tests with a FakeProvider override."""
+"""API and persistence tests with a FakeProvider override.
+
+All tests run against a dedicated, disposable test database (the `test_db`
+fixture). The application database is never touched; see conftest.py and the
+drop_db() safety guard.
+"""
 import pytest
 from fastapi.testclient import TestClient
 
 from claimlens import api
-from claimlens.agent import Agent
-from claimlens.database import drop_db, init_db
 from claimlens.provider import AssistantTurn
 
 from .conftest import FakeProvider, submit_turn, tool_call
 
 
-@pytest.fixture(scope="module", autouse=True)
-def _db():
-    init_db()
+@pytest.fixture(autouse=True)
+def _db(test_db):
+    # Every test in this module is bound to the disposable test database.
     yield
-    # leave tables for inspection; drop to keep tests hermetic
-    drop_db()
 
 
 @pytest.fixture
