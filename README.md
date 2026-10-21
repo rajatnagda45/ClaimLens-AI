@@ -195,10 +195,13 @@ Comparing exact correctly labeled gold spans, v2 gains 18 and loses 38 relative
 to v1. There is one saved run per version; these artifacts do not establish
 statistical stability or a causal “attention budget” explanation.
 
-The prompt change is identifiable, but the precise pre-check freeze/tuning
-history has not been independently established. No check-set labels were
-available or used in this remediation. Prior final-check input exposure/tuning
-remains **unverified pending the owner's confirmation**.
+The prompt change is identifiable. The saved report timestamps establish the
+run order (both development runs precede both check runs), and the owner attests
+that neither prompt was changed after inspecting any final-check answer or
+outcome (see "Ownership, time, and assistance"). The artifacts alone do not,
+however, independently prove intent, and the final-check inputs are present in
+`answers.csv`, so the benchmark is **not fully blind**. No check-set gold labels
+were available or used in this remediation.
 
 A separate extraction/labeling pass is a possible next experiment, with unknown
 benefit and additional request-budget implications. It was not run.
@@ -268,24 +271,38 @@ spans and existing fact IDs.
 
 ## Ownership, time, and assistance
 
-AI coding assistants used through CLI tooling assisted implementation, testing,
-and subsequent review/remediation. Automated checks are identified by command
-and actual outcomes; this documentation does not claim that the owner personally
-performed each check.
+Two CLI-based AI coding assistants were used and are disclosed by name, with
+their roles:
 
-The owner reports approximately **2.5–3 hours** of focused original implementation
+- **Claude Code** (Anthropic) — initial implementation under the owner's
+  direction: the agent and tool-calling loop, the exact-span harness, the v1/v2
+  prompts, the four live runs, and the first round of tests and correctness
+  fixes.
+- **OpenAI Codex** — the subsequent independent, read-only audit and the
+  remediation verification (see `evidence/remediation_verification.txt`).
+
+Automated checks are identified by command and actual outcomes; this
+documentation does not claim that the owner personally executed each check.
+
+The owner reports approximately **2–2.5 hours** of focused original implementation
 and evaluation, covering the agent, exact-span harness, v1 baseline, v2 experiment,
 four live runs, and FastAPI/PostgreSQL integration with tests. Additional time was
 spent afterward on an independent audit and correctness fixes; that later effort
 is separate from the original estimate. Frozen prompts and saved live-run reports
 were not modified by these fixes.
 
-The owner confirms **no prompt tuning after inspecting final-check answers or
-outcomes**: the v2 change was based solely on the v1 development failure breakdown
-(A01–A40), particularly `unknown → supported` and `contradicted → supported`
-errors. The prompts were frozen before final-check predictions, and the intended
-v1/v2 difference was the evidence-first classification procedure. No check-set
-gold labels or outcomes were used to tune prompts or select a version.
+Two distinct claims about the prompts, stated separately:
+
+- **No tuning on the final check.** Neither prompt was changed after inspecting
+  any final-check (A41–A50) answer or outcome. The single v2 change was derived
+  only from the v1 *development* failure breakdown (A01–A40) — chiefly
+  `unknown → supported` and `contradicted → supported` errors — and the only
+  intended v1/v2 difference is the evidence-first classification procedure.
+- **Freeze timing.** Both prompt files were finalized before any final-check
+  prediction was generated and were unchanged across all four runs. The saved
+  report timestamps corroborate the ordering (the two development runs precede
+  the two check runs). No check-set gold label or outcome was used to tune a
+  prompt or to select a version.
 
 These time and workflow statements are owner-provided attestations, not facts
 independently established by the saved artifacts. Final-check inputs are present
