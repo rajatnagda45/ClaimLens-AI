@@ -278,8 +278,9 @@ their roles:
   direction: the agent and tool-calling loop, the exact-span harness, the v1/v2
   prompts, the four live runs, and the first round of tests and correctness
   fixes.
-- **OpenAI Codex** — the subsequent independent, read-only audit and the
-  remediation verification (see `evidence/remediation_verification.txt`).
+- **OpenAI Codex** — subsequent audit, implementation of post-run correctness
+  and safety fixes, and remediation verification (see
+  `evidence/remediation_verification.txt`).
 
 Automated checks are identified by command and actual outcomes; this
 documentation does not claim that the owner personally executed each check.
@@ -298,8 +299,9 @@ Two distinct claims about the prompts, stated separately:
   only from the v1 *development* failure breakdown (A01–A40) — chiefly
   `unknown → supported` and `contradicted → supported` errors — and the only
   intended v1/v2 difference is the evidence-first classification procedure.
-- **Freeze timing.** Both prompt files were finalized before any final-check
-  prediction was generated and were unchanged across all four runs. The saved
+- **Freeze timing.** The owner attests that both versions were frozen before
+  final-check predictions, with each version unchanged between its development
+  and check run. V2 was developed after inspecting v1 development failures. The saved
   report timestamps corroborate the ordering (the two development runs precede
   the two check runs). No check-set gold label or outcome was used to tune a
   prompt or to select a version.
