@@ -10,19 +10,26 @@ from __future__ import annotations
 
 import json
 import uuid
-from dataclasses import asdict
+import hashlib
+import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 
 from . import DATASET_VERSION, EVALUATOR_VERSION, FACT_VERSION
 from .agent import Agent
-from .config import REPORTS_DIR, Settings, get_settings
+from .config import REPORTS_DIR, PROJECT_ROOT, Settings, get_settings
 from .data_loader import answers_for_split, load_gold, source_hashes
 from .database import AnswerRow, ClaimRow, Run, get_session_factory, init_db
 from .evaluator import check_split_metrics, score
 from .prompts import PROMPT_VERSIONS
 from .provider import Provider
 from .schemas import AnswerResult, AnswerStatus, Metrics
+
+
+class RunFailure(RuntimeError):
+    def __init__(self, run_id):
+        self.run_id = str(run_id)
+        super().__init__("Evaluation infrastructure failed; partial evidence retained where available")
 
 
 def _match_info_map(answer_results, gold):
@@ -57,30 +64,78 @@ class Runner:
         write_report: bool = True,
     ) -> dict:
         answers = answers_for_split(split, settings=self.settings)
+        if agent_version not in PROMPT_VERSIONS:
+            raise ValueError("unknown agent version")
+        if not persist and not write_report:
+            raise ValueError("evaluation requires a prediction evidence destination")
         results: list[AnswerResult] = []
-        for a in answers:
-            results.append(self.agent.run(
-                a.answer_id, a.brand_id, a.question, a.ai_answer, agent_version,
-            ))
-
         is_dev = split == "development"
-        gold = load_gold(settings=self.settings) if is_dev else []
-        gold = [g for g in gold if g.answer_id in {a.answer_id for a in answers}]
-        metrics = score(results, gold) if is_dev else check_split_metrics(results)
-        match_info = _match_info_map(results, gold) if is_dev else {}
-
         run_id = uuid.uuid4()
+        metrics = Metrics()
         meta = self._metadata(run_id, agent_version, split, metrics)
+        meta["status"] = "running"
+        meta["scheduled_answer_ids"] = [a.answer_id for a in answers]
+        match_info = {}
 
-        if persist:
-            self._persist(run_id, meta, results, metrics, is_dev, match_info)
+        def checkpoint():
+            report = self._build_report(meta, results, metrics, is_dev, [])
+            # Disk evidence survives DB failure. Unique run paths cannot
+            # overwrite the frozen historical four-run reports.
+            if write_report:
+                self._write_report(agent_version, split, report)
+            if persist:
+                self._persist(run_id, meta, results, metrics, is_dev, match_info)
+            return report
 
-        report = self._build_report(meta, results, metrics, is_dev, gold)
-        if write_report:
-            self._write_report(agent_version, split, report)
-        return report
+        try:
+            checkpoint()
+            for a in answers:
+                results.append(self.agent.run(
+                    a.answer_id, a.brand_id, a.question, a.ai_answer, agent_version,
+                ))
+                metrics = check_split_metrics(results)
+                checkpoint()  # save predictions BEFORE any gold join
+            if source_hashes(self.settings) != meta["source_hashes"]:
+                raise ValueError("source inputs changed during the run")
+            kwargs = {"scheduled_ids": meta["scheduled_answer_ids"],
+                      "answer_texts": {a.answer_id: a.ai_answer for a in answers}}
+            if is_dev:
+                gold = load_gold(settings=self.settings)
+                metrics = score(results, gold, **kwargs)
+                match_info = _match_info_map(results, gold)
+            else:
+                metrics = check_split_metrics(results, **kwargs)
+            meta["status"] = "completed"
+            meta["completed_at"] = datetime.now(timezone.utc).isoformat()
+            return checkpoint()
+        except BaseException as exc:
+            meta["status"] = "failed"
+            meta["failure"] = "Evaluation interrupted or infrastructure failed"
+            metrics = Metrics(accepted_predictions=sum(len(a.claims) for a in results),
+                              answers_success=sum(a.status == AnswerStatus.SUCCESS for a in results),
+                              answers_empty=sum(a.status == AnswerStatus.EMPTY for a in results),
+                              answers_error=sum(a.status == AnswerStatus.ERROR for a in results))
+            match_info = {}
+            try:
+                checkpoint()
+            except Exception:
+                pass  # a failed storage destination cannot promise durability
+            if not isinstance(exc, Exception):
+                raise
+            raise RunFailure(run_id) from exc
 
     def _metadata(self, run_id, agent_version, split, metrics) -> dict:
+        try:
+            revision = subprocess.check_output(
+                ["git", "rev-parse", "HEAD"], cwd=PROJECT_ROOT, stderr=subprocess.DEVNULL,
+                text=True, timeout=2,
+            ).strip()
+        except (OSError, subprocess.SubprocessError):
+            revision = None
+        runtime = hashlib.sha256()
+        for path in sorted((PROJECT_ROOT / "claimlens").rglob("*.py")):
+            runtime.update(str(path.relative_to(PROJECT_ROOT)).encode())
+            runtime.update(path.read_bytes())
         return {
             "run_id": str(run_id),
             "split": split,
@@ -93,6 +148,9 @@ class Runner:
             "model": self.settings.model,
             "settings": self.settings.masked(),
             "source_hashes": source_hashes(self.settings),
+            "source_revision": revision,
+            "runtime_sha256": runtime.hexdigest(),
+            "prompt_sha256": hashlib.sha256((PROJECT_ROOT / "claimlens" / "prompts" / f"{agent_version}.py").read_bytes()).hexdigest(),
             "status": "completed",
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "is_live": self.provider_name == "OpenAIProvider",
@@ -102,31 +160,54 @@ class Runner:
         init_db()
         Session = get_session_factory()
         with Session() as s:
-            run = Run(
-                id=run_id, split=meta["split"], agent_version=meta["agent_version"],
-                prompt_version=meta["prompt_version"],
-                dataset_version=meta["dataset_version"],
-                evaluator_version=meta["evaluator_version"],
-                fact_version=meta["fact_version"], provider=meta["provider"],
-                model=meta["model"], status=meta["status"],
-                settings=meta["settings"], source_hashes=meta["source_hashes"],
-                metrics=metrics.model_dump() if is_dev else _null_quality(metrics),
-            )
-            s.add(run)
+            run = s.get(Run, run_id)
+            if run is None:
+                run = Run(
+                    id=run_id, split=meta["split"], agent_version=meta["agent_version"],
+                    prompt_version=meta["prompt_version"],
+                    dataset_version=meta["dataset_version"],
+                    evaluator_version=meta["evaluator_version"],
+                    fact_version=meta["fact_version"], provider=meta["provider"],
+                    model=meta["model"], status=meta["status"],
+                    settings=meta["settings"], source_hashes=meta["source_hashes"],
+                    metrics=metrics.model_dump() if is_dev else _null_quality(metrics),
+                )
+                s.add(run)
+                s.flush()
+            run.status = meta["status"]
+            run.metrics = metrics.model_dump() if is_dev else _null_quality(metrics)
+            run.source_revision = meta.get("source_revision")
+            run.settings = {
+                **meta["settings"],
+                "run_provenance": {k: meta.get(k) for k in (
+                    "runtime_sha256", "prompt_sha256", "scheduled_answer_ids", "failure"
+                )},
+            }
             for ar in results:
-                s.add(AnswerRow(
-                    run_id=run_id, answer_id=ar.answer_id, status=ar.status.value,
-                    error_type=ar.error_type.value if ar.error_type else None,
-                    error_message=ar.error_message, latency_ms=ar.latency_ms,
-                    turns_used=ar.turns_used, trace={"exchange": ar.trace},
-                ))
-                for c in ar.claims:
-                    s.add(ClaimRow(
-                        run_id=run_id, answer_id=ar.answer_id, claim_id=c.claim_id,
-                        start_char=c.start_char, end_char=c.end_char, quote=c.quote,
-                        label=c.label, fact_ids=c.fact_ids, reason=c.reason,
-                        match_info=match_info.get(c.claim_id) if is_dev else None,
+                existing = s.query(AnswerRow).filter_by(
+                    run_id=run_id, answer_id=ar.answer_id
+                ).first()
+                if existing is None:
+                    s.add(AnswerRow(
+                        run_id=run_id, answer_id=ar.answer_id, status=ar.status.value,
+                        error_type=ar.error_type.value if ar.error_type else None,
+                        error_message=ar.error_message, latency_ms=ar.latency_ms,
+                        turns_used=ar.turns_used, trace={"exchange": ar.trace},
                     ))
+                    s.flush()
+                for c in ar.claims:
+                    saved = s.query(ClaimRow).filter_by(
+                        run_id=run_id, answer_id=ar.answer_id,
+                        start_char=c.start_char, end_char=c.end_char,
+                    ).first()
+                    if saved is None:
+                        saved = ClaimRow(
+                            run_id=run_id, answer_id=ar.answer_id, claim_id=c.claim_id,
+                            start_char=c.start_char, end_char=c.end_char, quote=c.quote,
+                            label=c.label, fact_ids=c.fact_ids, reason=c.reason,
+                        )
+                        s.add(saved)
+                    saved.match_info = match_info.get(c.claim_id) if is_dev else None
             s.commit()
 
     def _build_report(self, meta, results, metrics, is_dev, gold) -> dict:
@@ -150,20 +231,21 @@ class Runner:
         }
 
     def _write_report(self, agent_version, split, report):
-        REPORTS_DIR.mkdir(exist_ok=True)
-        stem = f"{agent_version}_{split}"
-        (REPORTS_DIR / f"{stem}.json").write_text(
-            json.dumps(report, indent=2), encoding="utf-8"
-        )
-        (REPORTS_DIR / f"{stem}.md").write_text(
-            _markdown_summary(report), encoding="utf-8"
-        )
+        folder = REPORTS_DIR / "runs"
+        folder.mkdir(parents=True, exist_ok=True)
+        stem = str(uuid.UUID(report["metadata"]["run_id"]))
+        for suffix, content in (("json", json.dumps(report, indent=2)),
+                                ("md", _markdown_summary(report))):
+            target = folder / f"{stem}.{suffix}"
+            temp = target.with_suffix(f".{suffix}.tmp")
+            temp.write_text(content, encoding="utf-8")
+            temp.replace(target)
 
 
 def _null_quality(metrics: Metrics) -> dict:
     """Check-split metrics: gold-dependent fields null, counts preserved."""
     d = metrics.model_dump()
-    for k in ("gold_claims", "accepted_predictions", "span_matches",
+    for k in ("gold_claims", "span_matches",
               "correct_label_matches", "extraction_precision",
               "extraction_recall", "extraction_f1", "joint_precision",
               "joint_recall", "joint_f1", "gold_coverage", "missed_gold_ids",
@@ -183,12 +265,13 @@ def _markdown_summary(report: dict) -> str:
         f"- prompt: `{m['prompt_version']}`  evaluator: `{m['evaluator_version']}`",
         f"- fact: `{m['fact_version']}`  dataset: `{m['dataset_version']}`",
         f"- timestamp: {m['timestamp']}",
+        f"- status: {m['status']}",
         f"- source_hashes: {json.dumps(m['source_hashes'])}",
         "",
         "## Metrics",
     ]
     if mx.get("joint_f1") is None:
-        lines.append("_Quality metrics are null for this split (check split)._")
+        lines.append("_Quality metrics are unavailable for check, empty, running, or failed runs._")
     else:
         lines += [
             f"- G={mx['gold_claims']} P={mx['accepted_predictions']} "
@@ -206,6 +289,6 @@ def _markdown_summary(report: dict) -> str:
         extra = f" error={a['error_type']}" if a["error_type"] else ""
         lines.append(
             f"- {a['answer_id']}: {a['status']} "
-            f"claims={len(a['claims'])} latency={a['latency_ms']:.0f}ms{extra}"
+            f"claims={len(a['claims'])} latency={a['latency_ms'] or 0:.0f}ms{extra}"
         )
     return "\n".join(lines) + "\n"

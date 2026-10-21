@@ -1,0 +1,19 @@
+{
+  "reports/v2_check.json": "384cddb1f295cfbfcabe42046ae1b8d99610f9599a3070958471de586460f276",
+  "reports/run_all.log": "5ebe0b9b17f08acf087814b097f3d7920f624820a668966c5d00ceab45ded579",
+  "reports/v2_development.json": "6da735c22dcbb1b48e427dde737444aecd64f1e59844ec52d30f4f4d37832a86",
+  "reports/v2_check.md": "d0c62a2bc85eda6facf5ec5680b21b60e7c2a729fd299f69f20abc53a63ca3f5",
+  "reports/comparison.json": "0f41f9119810b79e618ad91ef6de06c62201fc0a042931b95e9f2ca751925738",
+  "reports/v2_development.md": "babddc202a9f839afc6997ae01e86675e073e4224247caf169c0a0038ffb943f",
+  "reports/v1_development.json": "9233541bf48001e3a92afa8a976a56b258f5f4e7fc25dc832bc2ac504d2dcb2e",
+  "reports/v1_check.md": "fe60a7773422c33b3bd218f9dddae941aed31b012518879a7e035b8b413326f3",
+  "reports/v1_development.md": "9594bfca54ee0a95a898c54c6de42666bba5cc77ff2c3e765dc95514db2893dc",
+  "reports/v1_check.json": "5e94d847769d2043cb6dfc40e8f8fec7d2154d93adb2063d0a6d94e7bae4af38",
+  "claimlens/prompts/v1.py": "bc09ceb9f95c076b15e20b7cf2f8083ca2f2f785760d4fcdfa690065fae5a702",
+  "claimlens/prompts/__init__.py": "fdc09e73698fbb96283a7e61d12c87727a8ceee8a23d222737fc5642e7c2ef8f",
+  "claimlens/prompts/v2.py": "07aeecdee0d4ad060483e10c34311b00a2e4c9f0e0844da1fa158696591881e8",
+  "answers.csv": "fa28e813ea54b4e5ea985585f22f084d826241e1182accbc27ace17066125724",
+  "development_gold.csv": "afe84cc78f304afb6a4aaa505dd7504af80fcbf8bc507806aa5ff0aab6bf4850",
+  "brand_facts.csv": "2190d40fad2dd167ef2437956c43d595aaf2554ea673a4789b9343cb7e2936f2",
+  "Assessment.docx": "53ad93fdbdff4f49c7d315a6f17b9ffd7d0391ce74c4beed02344eea7a55b5c1"
+}

@@ -76,3 +76,28 @@ def test_decimal_and_single_sentence_not_flagged_as_merged():
     text = "The weight is 1.5 kilograms."
     span = locate(text, "The weight is 1.5 kilograms.")
     assert text[span.start_char:span.end_char] == "The weight is 1.5 kilograms."
+
+
+@pytest.mark.parametrize("text", [
+    "Dr. Rao recommends the Mini.", "J. Smith measured 0.35 kilograms.",
+    '"The Mini is red."', "(The Mini is red.)", "The Mini (e.g. its case) is red.",
+    'He said "It works." and confirmed the price.', "日本語 weighs 0.35 kg.",
+])
+def test_complete_sentence_punctuation(text):
+    s = locate(text, text)
+    assert text[s.start_char:s.end_char] == text
+
+
+def test_sentence_after_closing_quote():
+    text = '"It is red." It is blue.'
+    assert locate(text, "It is blue.").start_char == 13
+
+
+def test_ambiguous_repetition_rejected():
+    with pytest.raises(SpanError, match="ambiguous"):
+        locate_all("It is red. It is red.", ["It is red."])
+
+
+def test_abbreviation_suffix_is_not_a_sentence():
+    with pytest.raises(SpanError):
+        locate("Dr. Rao recommends it.", "Rao recommends it.")

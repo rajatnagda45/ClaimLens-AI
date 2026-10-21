@@ -10,7 +10,7 @@ from __future__ import annotations
 from dataclasses import asdict
 
 from . import FACT_VERSION
-from .data_loader import BrandFact, load_brand_facts
+from .data_loader import BrandFact, load_brand_facts, interpret_value
 
 TOOL_NAME = "get_brand_facts"
 
@@ -22,8 +22,8 @@ class ToolError(Exception):
 class FactTool:
     """Encapsulates the catalogue and the single read-only lookup."""
 
-    def __init__(self, facts: list[BrandFact] | None = None):
-        self._facts = facts if facts is not None else load_brand_facts()
+    def __init__(self, facts: list[BrandFact] | None = None, *, settings=None):
+        self._facts = facts if facts is not None else load_brand_facts(settings=settings)
         self._brands = {f.brand_id for f in self._facts}
 
     @property
@@ -42,7 +42,7 @@ class FactTool:
         if brand_id not in self._brands:
             raise ToolError(f"unknown brand: {brand_id!r}")
 
-        rows = [asdict(f) for f in self._facts if f.brand_id == brand_id]
+        rows = [{**asdict(f), "value": interpret_value(f)} for f in self._facts if f.brand_id == brand_id]
         return {
             "brand_id": brand_id,
             "fact_version": FACT_VERSION,

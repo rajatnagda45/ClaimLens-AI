@@ -52,11 +52,11 @@ def test_missed_claim_counts_against_recall():
 def test_extra_advice_hurts_precision():
     g = [gold("A01", 0, 10, "abcdefghi.", "supported")]
     r = [ok("A01", [claim("A01", 0, 10, "abcdefghi.", "supported"),
-                    claim("A01", 20, 30, "extrააdvic.", "unknown")])]
+                    claim("A01", 20, 31, "extrააdvic.", "unknown")])]
     m = score(r, g)
     assert m.accepted_predictions == 2 and m.span_matches == 1
     assert m.extraction_precision == 0.5
-    assert m.unmatched_prediction_ids == ["A01:20:30"]
+    assert m.unmatched_prediction_ids == ["A01:20:31"]
 
 
 def test_correct_span_wrong_label():
@@ -108,20 +108,16 @@ def test_duplicate_answer_outcomes_do_not_double_count_gold():
     # matching keeps a gold span matched at most once.
     g = [gold("A01", 0, 10, "abcdefghi.", "supported")]
     dup = ok("A01", [claim("A01", 0, 10, "abcdefghi.", "supported")])
-    m = score([dup, dup], g)
-    assert m.span_matches == 1
-    assert m.accepted_predictions == 2  # duplicate prediction counted in P
-    assert m.extraction_precision == 0.5
+    with pytest.raises(ValueError, match="duplicate answer"):
+        score([dup, dup], g)
 
 
 def test_missing_answer_outcome_counts_gold_as_missed():
     # Gold for A02 with no outcome row for A02 -> its claims remain missed.
     g = [gold("A01", 0, 10, "abcdefghi.", "supported"),
          gold("A02", 0, 8, "jklmnop.", "unknown")]
-    m = score([ok("A01", [claim("A01", 0, 10, "abcdefghi.", "supported")])], g)
-    assert m.gold_claims == 2
-    assert m.span_matches == 1
-    assert "A02:0:8" in m.missed_gold_ids
+    with pytest.raises(ValueError, match="missing or unexpected"):
+        score([ok("A01", [claim("A01", 0, 10, "abcdefghi.", "supported")])], g)
 
 
 def test_one_to_one_matching():
@@ -131,5 +127,40 @@ def test_one_to_one_matching():
          ok("A01", [claim("A01", 0, 10, "abcdefghi.", "supported")])]
     # duplicate answer rows would normally be rejected upstream; here we only
     # assert the scorer never double-counts a gold span.
-    m = score(r, g)
-    assert m.span_matches == 1
+    with pytest.raises(ValueError, match="duplicate answer"):
+        score(r, g)
+
+
+def test_explicit_schedule_includes_answers_without_gold():
+    with pytest.raises(ValueError, match="missing or unexpected"):
+        score([], [], scheduled_ids=["A01"])
+
+
+def test_source_mismatch_rejected():
+    with pytest.raises(ValueError, match="original source"):
+        score([ok("A01", [claim("A01", 0, 2, "X.", "unknown")])],
+              [gold("A01", 0, 2, "A.", "supported")], answer_texts={"A01": "A."})
+
+
+def test_duplicate_claims_rejected():
+    c = claim("A01", 0, 2, "A.", "supported")
+    with pytest.raises(ValueError):
+        score([ok("A01", [c, c])], [gold("A01", 0, 2, "A.", "supported")])
+
+
+def test_main_scorer_mandatory_arithmetic():
+    g = [gold("A01", i * 3, i * 3 + 2, "A.", "supported") for i in range(10)]
+    p = [claim("A01", i * 3, i * 3 + 2, "A.",
+               "supported" if i < 7 else "unknown") for i in [*range(8), 10, 11]]
+    m = score([ok("A01", p)], g)
+    assert (m.gold_claims, m.accepted_predictions, m.span_matches, m.correct_label_matches) == (10, 10, 8, 7)
+    assert m.extraction_f1 == .8 and m.joint_f1 == .7
+
+
+def test_check_schedule_and_prediction_count():
+    from claimlens.evaluator import check_split_metrics
+    r = ok("A41", [claim("A41", 0, 2, "A.", "unknown")])
+    m = check_split_metrics([r], scheduled_ids=["A41"])
+    assert m.accepted_predictions == 1 and m.joint_f1 is None and m.gold_claims is None
+    with pytest.raises(ValueError):
+        check_split_metrics([r], scheduled_ids=["A41", "A42"])

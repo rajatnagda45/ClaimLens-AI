@@ -37,20 +37,20 @@ class ModelClaim(BaseModel):
     We deliberately do NOT trust model-provided character counts.
     """
 
-    model_config = ConfigDict(extra="ignore")
+    model_config = ConfigDict(extra="forbid", strict=True)
 
     quote: str
     label: Label
-    fact_ids: list[str] = Field(default_factory=list)
-    reason: str = ""
+    fact_ids: list[str]
+    reason: str
 
 
 class ModelExtraction(BaseModel):
     """Top-level structured output expected from the model."""
 
-    model_config = ConfigDict(extra="ignore")
+    model_config = ConfigDict(extra="forbid", strict=True)
 
-    claims: list[ModelClaim] = Field(default_factory=list)
+    claims: list[ModelClaim]
 
 
 class AnswerStatus(str, Enum):

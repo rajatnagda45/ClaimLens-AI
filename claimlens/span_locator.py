@@ -1,25 +1,17 @@
-"""Deterministic quote-to-span locator.
+"""Deterministic source spans with conservative English sentence boundaries.
 
-Python — not the model — owns character offsets. Given a model-proposed exact
-quote, we locate it in the ORIGINAL decoded answer text using zero-based
-Unicode code-point positions. Repeated occurrences are resolved by source
-order (a monotonic cursor), never by gold spans. Ambiguous / not-found /
-boundary-invalid quotes are rejected rather than mis-assigned.
-
-No fuzzy matching, no normalization, no edited source.
+No gold, normalization, fuzzy matching, or model-supplied offsets are used.
+Abbreviations are heuristic; unresolved repeated quotations fail explicitly.
 """
 from __future__ import annotations
 
 import re
+from collections import Counter
 from dataclasses import dataclass
 
-SENTENCE_ENDINGS = (".", "!", "?")
-
-# An internal sentence terminator (optionally followed by a closing quote/
-# bracket) followed by whitespace indicates the quote spans MORE than one
-# sentence, i.e. a merged quote. Checked against quote[:-1] so the quote's own
-# final punctuation is excluded.
-_INTERNAL_BOUNDARY = re.compile(r"[.!?][\"')\]]?\s")
+_CLOSERS = "\"'”’)]}"
+_ABBREVIATIONS = {"mr", "mrs", "ms", "dr", "prof", "sr", "jr", "vs", "e.g", "i.e"}
+_TOKEN = re.compile(r"([A-Za-z.]+)\.$")
 
 
 @dataclass(frozen=True)
@@ -29,122 +21,88 @@ class LocatedSpan:
 
 
 class SpanError(Exception):
-    """Raised when a quote cannot be unambiguously and validly located."""
+    """A quotation is absent, incomplete, merged, or ambiguous."""
 
 
-def _sentence_start_ok(text: str, start: int) -> bool:
-    """True if `start` is a real sentence boundary.
+def sentence_spans(text: str) -> list[LocatedSpan]:
+    """Return original offsets, including a final unfinished clause if present.
 
-    Whitespace immediately before `start` is necessary but NOT sufficient: a
-    fragment like "is red." inside "It is red." is also whitespace-preceded.
-    We require the first non-space character before the leading whitespace run
-    to be a sentence terminator (.!?) or start-of-text.
+    Decimal points and common abbreviations do not terminate sentences. Closing
+    quotes/brackets belong to the preceding sentence. This is deliberately a
+    small English heuristic, not a claim of universal linguistic segmentation.
     """
-    i = start - 1
-    while i >= 0 and text[i].isspace():
-        i -= 1
-    return i < 0 or text[i] in ".!?"
+    spans = []
+    start = 0
+    while start < len(text) and text[start].isspace():
+        start += 1
+    i = start
+    while i < len(text):
+        char = text[i]
+        if char not in ".!?":
+            i += 1
+            continue
+        end = i + 1
+        while end < len(text) and text[end] in ".!?" + _CLOSERS:
+            end += 1
+        if end < len(text) and not text[end].isspace():
+            i += 1
+            continue
+        following = end
+        while following < len(text) and text[following].isspace():
+            following += 1
+        if char == "." and following < len(text):
+            token_match = _TOKEN.search(text[start:i + 1])
+            token = token_match.group(1) if token_match else ""
+            next_word = re.match(r"[A-Z][a-z]+", text[following:])
+            if token.lower() in _ABBREVIATIONS or (len(token) == 1 and token.isupper() and next_word):
+                i += 1
+                continue
+        # Quoted speech or a parenthetical sentence followed by a continuation.
+        if end > i + 1 and following < len(text) and text[following].islower():
+            i += 1
+            continue
+        spans.append(LocatedSpan(start, end))
+        start = following
+        i = following
+    if start < len(text):
+        end = len(text.rstrip())
+        if end > start:
+            spans.append(LocatedSpan(start, end))
+    return spans
 
 
-def _boundary_ok(text: str, start: int, end: int) -> bool:
-    """A located span must be a complete sentence, not a fragment.
-
-    `start` must be a real sentence boundary (see `_sentence_start_ok`) and the
-    char after `end` must be whitespace or end-of-text. This rejects
-    mid-sentence fragments even when they sit at a word boundary.
-    """
-    before = text[start - 1] if start > 0 else None
-    after = text[end] if end < len(text) else None
-    left_ok = (before is None or before.isspace()) and _sentence_start_ok(text, start)
-    right_ok = after is None or after.isspace()
-    return left_ok and right_ok
+def _validate_quote(quote: str) -> None:
+    if not quote or quote != quote.strip():
+        raise SpanError("quote is empty or has surrounding whitespace")
+    if not quote.rstrip(_CLOSERS).endswith((".", "!", "?")):
+        raise SpanError("quote does not end with sentence punctuation")
 
 
-def _is_single_sentence(quote: str) -> bool:
-    """False if the quote contains an internal sentence boundary (merged)."""
-    return _INTERNAL_BOUNDARY.search(quote[:-1]) is None
+def _occurrences(text: str, quote: str) -> list[LocatedSpan]:
+    _validate_quote(quote)
+    return [s for s in sentence_spans(text) if text[s.start_char:s.end_char] == quote]
 
 
 def locate(text: str, quote: str, cursor: int = 0) -> LocatedSpan:
-    """Locate `quote` in `text` at or after `cursor`.
-
-    Raises SpanError if the quote is empty, has surrounding whitespace, does
-    not end in sentence punctuation, cannot be found at/after the cursor, or
-    fails the sentence-boundary check.
-    """
-    if not quote:
-        raise SpanError("empty quote")
-    if quote != quote.strip():
-        raise SpanError("quote has leading/trailing whitespace")
-    if not quote.endswith(SENTENCE_ENDINGS):
-        raise SpanError("quote does not end with sentence punctuation")
-    if not _is_single_sentence(quote):
-        raise SpanError("quote spans more than one sentence (merged)")
-
-    search_from = cursor
-    while True:
-        idx = text.find(quote, search_from)
-        if idx == -1:
-            raise SpanError(
-                f"quote not found at/after position {cursor}: {quote[:40]!r}"
-            )
-        end = idx + len(quote)
-        if _boundary_ok(text, idx, end):
-            return LocatedSpan(idx, end)
-        # Matched substring sits mid-word/mid-sentence; keep searching.
-        search_from = idx + 1
-
-
-def _all_occurrences(text: str, quote: str) -> list[int]:
-    """All sentence-boundary-valid start positions of `quote` in `text`."""
-    starts: list[int] = []
-    frm = 0
-    while True:
-        idx = text.find(quote, frm)
-        if idx == -1:
-            break
-        if _boundary_ok(text, idx, idx + len(quote)):
-            starts.append(idx)
-        frm = idx + 1
-    return starts
+    candidates = [s for s in _occurrences(text, quote) if s.start_char >= cursor]
+    if not candidates:
+        raise SpanError("quote is not a complete source sentence")
+    if len(candidates) != 1:
+        raise SpanError("ambiguous repeated quote; supply every occurrence in source order")
+    return candidates[0]
 
 
 def locate_all(text: str, quotes: list[str]) -> list[LocatedSpan]:
-    """Locate each quote at its true position, independent of model ordering.
-
-    Each quote is validated (non-empty, trimmed, sentence-ending) and located
-    by its actual occurrence(s) in the source. Unique quotes (the common case —
-    gold never repeats a quote within an answer) are placed at their only
-    position even if the model returns claims out of order. Genuinely repeated
-    quotes are disambiguated by source order (prefer the next unused occurrence
-    at/after the previous pick). A quote with no valid occurrence, or whose
-    occurrences are all already consumed, raises SpanError (=> answer-level
-    error). Ordering/overlap is enforced downstream by the validator.
-    """
-    spans: list[LocatedSpan] = []
-    used: set[int] = set()
-    approx_cursor = 0
+    counts = Counter(quotes)
+    occurrences = {q: _occurrences(text, q) for q in counts}
+    for q, count in counts.items():
+        if len(occurrences[q]) != count:
+            raise SpanError("quote missing, duplicated, incomplete, merged, or ambiguous")
+    # All repeated occurrences must be represented. Assign identical quotations
+    # in source order, while allowing distinct quotations to arrive out of order.
+    used = Counter()
+    result = []
     for q in quotes:
-        if not q:
-            raise SpanError("empty quote")
-        if q != q.strip():
-            raise SpanError("quote has leading/trailing whitespace")
-        if not q.endswith(SENTENCE_ENDINGS):
-            raise SpanError("quote does not end with sentence punctuation")
-        if not _is_single_sentence(q):
-            raise SpanError("quote spans more than one sentence (merged)")
-
-        occs = _all_occurrences(text, q)
-        if not occs:
-            raise SpanError(f"quote not found: {q[:40]!r}")
-
-        choice = next((s for s in occs if s >= approx_cursor and s not in used), None)
-        if choice is None:
-            choice = next((s for s in occs if s not in used), None)
-        if choice is None:
-            raise SpanError(f"all occurrences already consumed: {q[:40]!r}")
-
-        used.add(choice)
-        approx_cursor = choice + len(q)
-        spans.append(LocatedSpan(choice, choice + len(q)))
-    return spans
+        result.append(occurrences[q][used[q]])
+        used[q] += 1
+    return result

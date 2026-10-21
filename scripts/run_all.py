@@ -1,59 +1,49 @@
-"""Execute the four live runs in sequence and emit the comparison.
-
-Requires OPENAI_API_KEY in the environment / .env. Produces:
-  reports/v1_development.{json,md}  reports/v2_development.{json,md}
-  reports/v1_check.{json,md}        reports/v2_check.{json,md}
-  reports/comparison.json           (v1-vs-v2 dev metrics + failure summary)
-
-Usage:  python -m scripts.run_all          (all four)
-        python -m scripts.run_all v1 development   (one run)
-"""
+"""Run explicitly authorized new experiments without replacing frozen evidence."""
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 
 from claimlens.analysis import compare
 from claimlens.config import REPORTS_DIR, get_settings
-from claimlens.provider import OpenAIProvider
-from claimlens.runner import Runner
+from claimlens.provider import OpenAIProvider, ProviderError
+from claimlens.runner import Runner, RunFailure
 
 RUNS = [("v1", "development"), ("v2", "development"),
         ("v1", "check"), ("v2", "check")]
 
 
 def main(argv: list[str]) -> int:
-    s = get_settings()
-    if not s.openai_api_key:
-        print("ERROR: OPENAI_API_KEY not set. Add it to .env first.", file=sys.stderr)
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("version", nargs="?", choices=["v1", "v2"])
+    parser.add_argument("split", nargs="?", choices=["development", "check"])
+    parser.add_argument("--confirm-live", action="store_true",
+                        help="Authorize paid API requests for a new experiment")
+    args = parser.parse_args(argv)
+    if not args.confirm_live:
+        parser.error("--confirm-live is required for paid API requests")
+    if bool(args.version) != bool(args.split):
+        parser.error("version and split must be supplied together")
+    settings = get_settings()
+    if not settings.openai_api_key:
+        print("OPENAI_API_KEY is not set.", file=sys.stderr)
         return 2
-
-    runs = RUNS
-    if len(argv) == 2:
-        runs = [(argv[0], argv[1])]
-
-    provider = OpenAIProvider(s)
-    runner = Runner(provider, s)
-    for version, split in runs:
-        print(f"=== running {version} / {split} (model={s.model}) ===", flush=True)
-        report = runner.run_split(version, split, persist=True, write_report=True)
-        m = report["metrics"]
-        if m.get("joint_f1") is not None:
-            print(f"  joint_f1={m['joint_f1']:.3f} extraction_f1={m['extraction_f1']:.3f} "
-                  f"G={m['gold_claims']} P={m['accepted_predictions']} "
-                  f"M={m['span_matches']} C={m['correct_label_matches']}")
-        print(f"  success={m['answers_success']} empty={m['answers_empty']} "
-              f"error={m['answers_error']}")
-
-    # Comparison (only if both dev reports exist)
-    v1d = REPORTS_DIR / "v1_development.json"
-    v2d = REPORTS_DIR / "v2_development.json"
-    if v1d.exists() and v2d.exists():
-        cmp = compare(v1d, v2d)
-        (REPORTS_DIR / "comparison.json").write_text(
-            json.dumps(cmp, indent=2), encoding="utf-8")
-        print("=== v1 vs v2 (development) ===")
-        print(json.dumps(cmp, indent=2))
+    runs = [(args.version, args.split)] if args.version else RUNS
+    try:
+        runner = Runner(OpenAIProvider(settings), settings)
+        dev_reports = {}
+        for version, split in runs:
+            report = runner.run_split(version, split)
+            path = REPORTS_DIR / "runs" / (report["metadata"]["run_id"] + ".json")
+            print(json.dumps({"report": str(path), "metrics": report["metrics"]}))
+            if split == "development":
+                dev_reports[version] = path
+        if len(dev_reports) == 2:
+            print(json.dumps(compare(dev_reports["v1"], dev_reports["v2"]), indent=2))
+    except (ProviderError, RunFailure) as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
     return 0
 
 

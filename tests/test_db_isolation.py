@@ -1,6 +1,6 @@
 """Database isolation and persistence tests on a disposable test database.
 
-These confirm (a) the fixture binds a dedicated '<app>_test' database and never
+These confirm (a) the fixture binds a fresh UUID test database and never
 the application database, (b) drop_db() refuses to run against the application
 database, and (c) nonempty claims, valid empty outputs, and answer-level errors
 all persist and read back correctly — using synthetic inputs, no API credits.
@@ -24,7 +24,7 @@ from .conftest import FakeProvider
 def test_fixture_binds_disposable_db_not_app_db(test_db):
     app_db = make_url(get_settings().database_url).database
     active = database.get_engine().url.database
-    assert active == f"{app_db}_test"
+    assert active.startswith("claimlens_test_") and len(active) == 47
     assert active != app_db
 
 
@@ -37,6 +37,25 @@ def test_drop_db_refuses_application_database():
             database.drop_db()
     finally:
         database.set_database_url(get_settings().database_url)
+
+
+def test_drop_db_refuses_arbitrary_other_database():
+    original = get_settings().database_url
+    database.set_database_url(make_url(original).set(database="another_important_database"))
+    try:
+        with pytest.raises(RuntimeError):
+            database.drop_db(expected_database="another_important_database")
+    finally:
+        database.set_database_url(original)
+
+
+def test_connection_credentials_preserved():
+    from .conftest import _connection_options
+    from sqlalchemy.engine import URL
+    url = URL.create("postgresql+psycopg", username="a user", password="p a'ss", host="localhost", database="app")
+    options = _connection_options(url, "postgres")
+    assert options["password"] == "p a'ss" and options["user"] == "a user"
+    assert options["dbname"] == "postgres"
 
 
 def _claim(aid, s, e, q, label="unknown"):
@@ -70,6 +89,21 @@ def test_persist_nonempty_empty_and_error_outcomes(test_db):
         claims = s.query(ClaimRow).filter(ClaimRow.run_id == rid).all()
         assert len(claims) == 1
         assert claims[0].answer_id == "A01" and claims[0].label == "supported"
+    from fastapi.testclient import TestClient
+    from claimlens.api import app
+    response = TestClient(app).get(f"/evaluation-runs/{rid}")
+    assert response.status_code == 200
+    body = response.json()
+    assert [a["status"] for a in body["answers"]] == ["success", "empty", "error"]
+    assert body["answers"][0]["claims"][0]["quote"] == "abcd."
+    assert body["metrics"]["joint_f1"] is None
+    assert body["prompt_version"] and body["timestamp"]
+
+
+def test_guarded_table_drop_on_created_database(test_db):
+    database.drop_db(expected_database=test_db.database)
+    from sqlalchemy import inspect
+    assert inspect(database.get_engine()).get_table_names() == []
 
 
 def test_unique_span_constraint_enforced(test_db):

@@ -7,66 +7,67 @@ that gold data never enters the model/tool payload.
 from __future__ import annotations
 
 import json
+import uuid
 
 import psycopg
 import pytest
 from sqlalchemy.engine import make_url
+from psycopg import sql
 
 from claimlens import database
 from claimlens.config import get_settings
 from claimlens.provider import AssistantTurn, ProviderError, ProviderTimeout, ToolCall
 
 
-def _admin_conninfo(url) -> str:
-    """psycopg conninfo for the 'postgres' maintenance database."""
-    parts = ["dbname=postgres", f"host={url.host or 'localhost'}",
-             f"port={url.port or 5432}"]
-    if url.username:
-        parts.append(f"user={url.username}")
-    if url.password:
-        parts.append(f"password={url.password}")
-    return " ".join(parts)
+def _connection_options(url, database):
+    """Structured kwargs preserve passwords without string interpolation."""
+    return {k: v for k, v in dict(dbname=database, host=url.host or "localhost",
+                                port=url.port or 5432, user=url.username,
+                                password=url.password, connect_timeout=5).items() if v is not None}
 
 
-def _ensure_database(url, dbname: str) -> None:
-    with psycopg.connect(_admin_conninfo(url), autocommit=True) as conn:
-        exists = conn.execute(
-            "SELECT 1 FROM pg_database WHERE datname = %s", (dbname,)
-        ).fetchone()
-        if not exists:
-            conn.execute(f'CREATE DATABASE "{dbname}"')
+def pytest_addoption(parser):
+    parser.addoption("--run-db", action="store_true", help="Create unique disposable local PostgreSQL databases for integration tests")
 
 
 @pytest.fixture
-def test_db():
+def test_db(request):
     """Bind the ORM to a dedicated, disposable test database.
 
-    Explicit safety checks guarantee we never touch the configured application
-    database: the test DB name must differ from the app DB name and must end in
-    '_test'. drop_db() additionally refuses to run against the app DB.
+    Each fixture creates a fresh UUID database, verifies the server target, and
+    removes only that database. Existing databases are never reused.
     """
+    if not request.config.getoption("--run-db"):
+        pytest.skip("PostgreSQL integration requires --run-db")
     app_url = make_url(get_settings().database_url)
+    if app_url.host not in (None, "localhost", "127.0.0.1", "::1") or app_url.query:
+        pytest.fail("Integration fixtures require a local URL without query overrides")
     app_db = app_url.database
-    test_dbname = f"{app_db}_test"
+    test_dbname = f"claimlens_test_{uuid.uuid4().hex}"
 
     # Safety: never operate on the application database.
-    assert test_dbname != app_db
-    assert test_dbname.endswith("_test")
-
-    _ensure_database(app_url, test_dbname)
+    if test_dbname == app_db:
+        raise RuntimeError("test database must differ from application database")
+    # Never reuse an existing database. CREATE fails on collision.
+    with psycopg.connect(**_connection_options(app_url, "postgres"), autocommit=True) as conn:
+        conn.execute(sql.SQL("CREATE DATABASE {}").format(sql.Identifier(test_dbname)))
     test_url = app_url.set(database=test_dbname)
-    database.set_database_url(str(test_url))
-
-    # Safety: confirm the active binding is the disposable DB before any DDL.
-    assert database.get_engine().url.database == test_dbname
-    assert database.get_engine().url.database != app_db
-
-    database.init_db()
+    previous_engine, previous_session = database._engine, database._Session
+    engine = None
     try:
-        yield str(test_url)
+        engine = database.set_database_url(test_url)
+        with engine.connect() as conn:
+            if conn.exec_driver_sql("SELECT current_database()").scalar_one() != test_dbname:
+                raise RuntimeError("disposable target verification failed")
+        database.init_db()
+        yield test_url
     finally:
-        database.drop_db()  # guarded; active DB is the test DB
-        database.set_database_url(str(app_url))
+        if engine is not None:
+            engine.dispose()
+        database._engine, database._Session = previous_engine, previous_session
+        # This exact UUID database was created above, never an existing target.
+        with psycopg.connect(**_connection_options(app_url, "postgres"), autocommit=True) as conn:
+            conn.execute(sql.SQL("DROP DATABASE {}").format(sql.Identifier(test_dbname)))
 
 
 class FakeProvider:

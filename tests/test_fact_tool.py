@@ -31,3 +31,10 @@ def test_malformed_brand_arg_rejected():
     t = FactTool()
     with pytest.raises(ToolError):
         t.get_brand_facts("")
+
+
+def test_tool_returns_typed_values():
+    rows = {f["fact_id"]: f for f in FactTool().get_brand_facts("cleartrail")["facts"]}
+    assert rows["cleartrail.mini.wifi"]["value"] is False
+    assert rows["cleartrail.mini.price_2026"]["value"] == 1299
+    assert rows["cleartrail.mini.charging_port"]["value"] == "USB-C"

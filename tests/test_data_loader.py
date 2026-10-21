@@ -1,6 +1,7 @@
 """CSV and source-integrity tests."""
 import csv
 import io
+import pytest
 
 from claimlens import data_loader as dl
 from claimlens.data_loader import (
@@ -63,3 +64,17 @@ def test_gold_quotes_match_source():
     answers = {a.answer_id: a.ai_answer for a in load_answers()}
     for g in load_gold():
         assert answers[g.answer_id][g.start_char:g.end_char] == g.quote
+
+
+@pytest.mark.parametrize("value,kind", [("FALSE", "boolean"), ("NaN", "number"), ("1", "unsupported")])
+def test_invalid_fact_values_fail(value, kind):
+    f = BrandFact("x", "b", "m", "f", value, kind, "", "", "", "")
+    with pytest.raises(ValueError):
+        interpret_value(f)
+
+
+def test_fixed_schedule_rejects_deleted_answer(monkeypatch):
+    answers = load_answers()[:-1]
+    monkeypatch.setattr(dl, "load_answers", lambda **k: answers)
+    with pytest.raises(ValueError):
+        dl.answers_for_split("development")

@@ -11,6 +11,7 @@ SQLAlchemy ORM => parameterized SQL. Schema created idempotently via
 from __future__ import annotations
 
 import uuid
+import re
 from datetime import datetime, timezone
 
 from sqlalchemy import (
@@ -21,6 +22,7 @@ from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import (
     DeclarativeBase, Mapped, mapped_column, relationship, sessionmaker,
 )
+from sqlalchemy.engine import make_url
 
 from .config import get_settings
 
@@ -130,7 +132,7 @@ def get_session_factory():
     return _Session
 
 
-def set_database_url(url: str):
+def set_database_url(url):
     """Rebind the global engine/session to `url` (used by tests to target a
     disposable database). Disposes any previous engine."""
     global _engine, _Session
@@ -150,19 +152,21 @@ def init_db() -> None:
     Base.metadata.create_all(get_engine())
 
 
-def drop_db() -> None:
+def drop_db(*, expected_database: str | None = None) -> None:
     """Drop all tables on the CURRENTLY BOUND engine.
 
-    Safety guard: refuse to drop tables on the configured application database.
-    Tests must first rebind to a disposable database (its name must differ from
-    the application database's). This makes it impossible to wipe the app DB via
-    a test fixture, which previously caused data loss.
+    Require an explicitly named UUID test database, reject the configured app
+    database, and verify the server target before issuing DDL.
     """
-    app_db = create_engine(get_settings().database_url, future=True).url.database
-    active_db = get_engine().url.database
-    if active_db == app_db:
-        raise RuntimeError(
-            f"refusing to drop_db() on the application database {active_db!r}; "
-            "rebind to a disposable test database first"
-        )
-    Base.metadata.drop_all(get_engine())
+    engine = get_engine()
+    app_db = make_url(get_settings().database_url).database
+    active_db = engine.url.database
+    if (not expected_database or not re.fullmatch(r"claimlens_test_[0-9a-f]{32}", expected_database)
+            or active_db != expected_database or active_db == app_db):
+        raise RuntimeError("refusing table deletion outside the explicitly named disposable database")
+    # Verify the actual server target, not only a URL string (libpq options can
+    # otherwise redirect a connection). Never use assert for destructive guards.
+    with engine.begin() as connection:
+        if connection.exec_driver_sql("SELECT current_database()").scalar_one() != expected_database:
+            raise RuntimeError("connected database differs from disposable target")
+        Base.metadata.drop_all(connection)

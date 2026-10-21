@@ -17,10 +17,8 @@ A failure here is an answer-level error — never silently downgraded to
 """
 from __future__ import annotations
 
-import re
-
 from .schemas import Claim, Label, ModelClaim
-from .span_locator import SpanError, locate_all
+from .span_locator import SpanError, locate_all, sentence_spans
 
 VALID_LABELS = {"supported", "contradicted", "unknown"}
 
@@ -30,8 +28,7 @@ class ValidationError(Exception):
 
 
 def _count_sentences(text: str) -> int:
-    parts = [p for p in re.split(r"[.!?]+", text.strip()) if p.strip()]
-    return len(parts)
+    return len(sentence_spans(text))
 
 
 def build_claims(

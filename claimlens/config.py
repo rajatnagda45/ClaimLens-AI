@@ -46,6 +46,9 @@ class Settings(BaseModel):
         """Return a secret-free view suitable for logs and run metadata."""
         d = self.model_dump()
         d["openai_api_key"] = "***set***" if self.openai_api_key else "***unset***"
+        # Never serialize connection credentials or credential-bearing query
+        # parameters. The database target is deployment config, not inference.
+        d["database_url"] = "[redacted]"
         return d
 
 

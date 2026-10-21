@@ -18,8 +18,8 @@ from fastapi.responses import JSONResponse
 from .agent import Agent
 from .database import AnswerRow, ClaimRow, Run, get_session_factory, init_db
 from .fact_tool import FactTool
-from .provider import OpenAIProvider
-from .runner import Runner
+from .provider import OpenAIProvider, ProviderError, ProviderTimeout
+from .runner import Runner, RunFailure
 from .schemas import (
     AnswerStatus, ClassifyRequest, ClassifyResponse, ErrorType,
     EvaluationRunRequest,
@@ -40,7 +40,7 @@ _ERROR_STATUS = {
     ErrorType.ILLEGAL_TOOL: 502,
     ErrorType.TURN_EXHAUSTED: 502,
     ErrorType.VALIDATION_FAILED: 502,
-    ErrorType.UNKNOWN_BRAND: 404,
+    ErrorType.UNKNOWN_BRAND: 502,
 }
 
 
@@ -49,7 +49,12 @@ def get_fact_tool() -> FactTool:
 
 
 def get_provider():
-    return OpenAIProvider()
+    try:
+        return OpenAIProvider()
+    except ProviderTimeout:
+        raise HTTPException(504, detail={"error_type": "provider_timeout", "message": "Provider setup timed out"}) from None
+    except Exception:
+        raise HTTPException(502, detail={"error_type": "provider_error", "message": "Provider setup failed"}) from None
 
 
 @app.post("/classify", response_model=ClassifyResponse)
@@ -78,7 +83,11 @@ def classify(req: ClassifyRequest, fact_tool: FactTool = Depends(get_fact_tool))
 @app.post("/evaluation-runs", status_code=201)
 def create_evaluation_run(req: EvaluationRunRequest):
     runner = Runner(get_provider())
-    report = runner.run_split(req.agent_version, req.split, persist=True)
+    try:
+        report = runner.run_split(req.agent_version, req.split, persist=True)
+    except RunFailure as exc:
+        return JSONResponse(status_code=503, content={"run_id": exc.run_id,
+                            "status": "failed", "message": str(exc)})
     m = report["metrics"]
     return {
         "run_id": report["metadata"]["run_id"],
@@ -133,6 +142,13 @@ def get_evaluation_run(run_id: str = Path(...)):
             "status": run.status,
             "model": run.model,
             "provider": run.provider,
+            "prompt_version": run.prompt_version,
+            "dataset_version": run.dataset_version,
+            "evaluator_version": run.evaluator_version,
+            "fact_version": run.fact_version,
+            "settings": run.settings,
+            "source_revision": run.source_revision,
+            "timestamp": run.created_at.isoformat(),
             "metrics": run.metrics,
             "source_hashes": run.source_hashes,
             "answers": [
@@ -140,6 +156,7 @@ def get_evaluation_run(run_id: str = Path(...)):
                     "answer_id": a.answer_id, "status": a.status,
                     "error_type": a.error_type, "error_message": a.error_message,
                     "latency_ms": a.latency_ms, "turns_used": a.turns_used,
+                    "trace": a.trace,
                     "claims": claims_by_answer.get(a.answer_id, []),
                 }
                 for a in answers

@@ -10,6 +10,8 @@ from __future__ import annotations
 
 import csv
 import hashlib
+import math
+from datetime import date
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -76,7 +78,10 @@ def _read_dicts(path: str | Path, expected_cols: list[str]) -> list[dict]:
                 f"{path}: unexpected columns {reader.fieldnames}, "
                 f"expected {expected_cols}"
             )
-        return list(reader)
+        rows = list(reader)
+        if any(set(row) != set(expected_cols) or any(v is None for v in row.values()) for row in rows):
+            raise ValueError("CSV row has missing or extra fields")
+        return rows
 
 
 def load_answers(path: str | Path | None = None, settings: Settings | None = None) -> list[Answer]:
@@ -91,6 +96,8 @@ def load_answers(path: str | Path | None = None, settings: Settings | None = Non
             question=r["question"],
             ai_answer=r["ai_answer"],  # verbatim
         ))
+    if len({a.answer_id for a in out}) != len(out):
+        raise ValueError("duplicate answer ID")
     return out
 
 
@@ -105,6 +112,12 @@ def load_brand_facts(path: str | Path | None = None, settings: Settings | None =
             unit=r["unit"], condition=r["condition"],
             valid_from=r["valid_from"], valid_to=r["valid_to"],
         ))
+    if len({f.fact_id for f in out}) != len(out):
+        raise ValueError("duplicate fact ID")
+    for fact in out:
+        interpret_value(fact)
+        if date.fromisoformat(fact.valid_from) > date.fromisoformat(fact.valid_to):
+            raise ValueError("fact validity window is reversed")
     return out
 
 
@@ -129,7 +142,16 @@ def load_gold(path: str | Path | None = None, settings: Settings | None = None) 
 
 
 def answers_for_split(split: str, settings: Settings | None = None) -> list[Answer]:
-    return [a for a in load_answers(settings=settings) if a.split == split]
+    if split not in {"development", "check"}:
+        raise ValueError("unknown split")
+    answers = load_answers(settings=settings)
+    if len(answers) != 50 or len({a.answer_id for a in answers}) != 50:
+        raise ValueError("assessment requires 50 distinct answers")
+    expected = {f"A{i:02d}" for i in (range(1, 41) if split == "development" else range(41, 51))}
+    selected = [a for a in answers if a.split == split]
+    if {a.answer_id for a in selected} != expected:
+        raise ValueError("assessment split does not match the fixed schedule")
+    return selected
 
 
 def source_hashes(settings: Settings | None = None) -> dict[str, str]:
@@ -148,11 +170,17 @@ def interpret_value(fact: BrandFact):
     """
     v = fact.value
     if fact.value_type == "boolean":
-        return {"true": True, "false": False}.get(v.strip().lower())
+        if v not in {"true", "false"}:
+            raise ValueError("invalid boolean fact")
+        return v == "true"
     if fact.value_type == "number":
         try:
             f = float(v)
+            if not math.isfinite(f):
+                raise ValueError("non-finite numeric fact")
             return int(f) if f.is_integer() else f
         except ValueError:
-            return None
-    return v
+            raise ValueError("invalid numeric fact") from None
+    if fact.value_type == "string":
+        return v
+    raise ValueError("unsupported fact value type")

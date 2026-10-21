@@ -31,6 +31,7 @@ from .schemas import (
     AnswerResult, AnswerStatus, ErrorType, ModelClaim, ModelExtraction,
 )
 from .validator import ValidationError, build_claims
+from .security import redact
 
 SUBMIT_TOOL = "submit_claims"
 
@@ -81,12 +82,8 @@ class _AnswerError(Exception):
         super().__init__(message)
 
 
-# Errors the model can plausibly fix given one more turn (bad quote/label/fact).
-_RECOVERABLE = {ErrorType.VALIDATION_FAILED, ErrorType.INVALID_OUTPUT}
-
-
 def _sanitize_facts_for_trace(result: dict) -> dict:
-    return {"brand_id": result["brand_id"], "fact_count": len(result["facts"])}
+    return result  # supplied public catalogue, redacted before serialization
 
 
 class Agent:
@@ -98,7 +95,7 @@ class Agent:
     ):
         self.provider = provider
         self.settings = settings or get_settings()
-        self.fact_tool = fact_tool or FactTool()
+        self.fact_tool = fact_tool or FactTool(settings=self.settings)
 
     def run(
         self, answer_id: str, brand_id: str, question: str, ai_answer: str,
@@ -107,7 +104,7 @@ class Agent:
         """Process one answer into a terminal AnswerResult (never raises)."""
         start = time.perf_counter()
         trace: list[dict] = []
-        turns_used = 0
+        secrets = (self.settings.openai_api_key, self.settings.database_url)
         try:
             claims = self._loop(
                 answer_id, brand_id, question, ai_answer, agent_version, trace,
@@ -116,14 +113,22 @@ class Agent:
             status = AnswerStatus.EMPTY if not claims else AnswerStatus.SUCCESS
             return AnswerResult(
                 answer_id=answer_id, status=status, claims=claims,
-                latency_ms=latency, turns_used=trace_turns(trace), trace=trace,
+                latency_ms=latency, turns_used=trace_turns(trace), trace=redact(trace, secrets),
             )
         except _AnswerError as e:
             latency = (time.perf_counter() - start) * 1000
             return AnswerResult(
                 answer_id=answer_id, status=AnswerStatus.ERROR,
                 error_type=e.etype, error_message=e.message,
-                latency_ms=latency, turns_used=trace_turns(trace), trace=trace,
+                latency_ms=latency, turns_used=trace_turns(trace), trace=redact(trace, secrets),
+            )
+        except Exception:
+            return AnswerResult(
+                answer_id=answer_id, status=AnswerStatus.ERROR,
+                error_type=ErrorType.PROVIDER_ERROR,
+                error_message="Unexpected agent or provider failure",
+                latency_ms=(time.perf_counter() - start) * 1000,
+                turns_used=trace_turns(trace), trace=redact(trace, secrets),
             )
 
     # ---- internal ----
@@ -146,18 +151,22 @@ class Agent:
         ]
 
         max_turns = self.settings.max_turns
+        looked_up = False
         for _turn in range(max_turns):
             # On the final allowed turn, force submit_claims so the loop always
             # terminates with structured output rather than prose or a stray
             # extra lookup (otherwise => invalid_output / turn_exhausted).
             is_last = _turn == max_turns - 1
             tool_choice = (
+                {"type": "function", "function": {"name": "get_brand_facts"}}
+                if not looked_up else
                 {"type": "function", "function": {"name": SUBMIT_TOOL}}
                 if is_last else "required"
             )
+            trace.append({"role": "request", "turn": _turn + 1})
             turn = self._chat(messages, tool_choice)
             trace.append({"role": "assistant", "content": turn.content,
-                          "tool_calls": [{"name": tc.name, "arguments": tc.arguments}
+                          "tool_calls": [{"id": tc.id, "name": tc.name, "arguments": tc.arguments}
                                          for tc in turn.tool_calls]})
 
             if not turn.tool_calls:
@@ -171,48 +180,25 @@ class Agent:
             # Record the assistant tool-call message for the provider protocol.
             messages.append(self._assistant_msg(turn))
 
-            submit_call = None
+            if any(tc.name not in ALLOWED_TOOL_NAMES | {SUBMIT_TOOL} for tc in turn.tool_calls):
+                raise _AnswerError(ErrorType.ILLEGAL_TOOL, "model requested an unsupported tool")
+            if len({tc.id for tc in turn.tool_calls}) != len(turn.tool_calls) or any(not tc.id for tc in turn.tool_calls):
+                raise _AnswerError(ErrorType.INVALID_OUTPUT, "invalid tool call IDs")
+            submits = [tc for tc in turn.tool_calls if tc.name == SUBMIT_TOOL]
+            if submits:
+                if len(submits) != 1 or len(turn.tool_calls) != 1 or not looked_up:
+                    raise _AnswerError(ErrorType.INVALID_OUTPUT, "submit once, after consuming catalogue facts")
+                return self._finalize(answer_id, ai_answer, submits[0])
+
             for tc in turn.tool_calls:
-                if tc.name == SUBMIT_TOOL:
-                    submit_call = tc  # handle after fact lookups
-                    continue
-                if tc.name not in ALLOWED_TOOL_NAMES:
-                    raise _AnswerError(
-                        ErrorType.ILLEGAL_TOOL, f"illegal tool: {tc.name!r}",
-                    )
                 tool_result = self._exec_fact_tool(tc)
+                looked_up = True
                 messages.append({
                     "role": "tool", "tool_call_id": tc.id,
                     "content": json.dumps(tool_result),
                 })
-                trace.append({"role": "tool", "name": tc.name,
+                trace.append({"role": "tool", "name": tc.name, "tool_call_id": tc.id,
                               "result": _sanitize_facts_for_trace(tool_result)})
-
-            if submit_call is not None:
-                try:
-                    return self._finalize(answer_id, ai_answer, submit_call)
-                except _AnswerError as e:
-                    # Respond to the submit tool call so the history stays
-                    # valid, then decide whether a recovery turn is available.
-                    messages.append({
-                        "role": "tool", "tool_call_id": submit_call.id,
-                        "content": json.dumps({"error": e.message}),
-                    })
-                    trace.append({"role": "recovery", "error": e.message})
-                    if is_last or e.etype not in _RECOVERABLE:
-                        raise
-                    # One explicit, bounded recovery attempt (within turn budget).
-                    messages.append({
-                        "role": "user",
-                        "content": (
-                            "Your submit_claims was rejected: " + e.message +
-                            " Fix ONLY that problem and call submit_claims again. "
-                            "Copy each quote VERBATIM (character-for-character, "
-                            "including final punctuation) from the answer text, "
-                            "use only labels supported/contradicted/unknown, and "
-                            "use only fact_ids that exist in the catalogue."
-                        ),
-                    })
 
         raise _AnswerError(
             ErrorType.TURN_EXHAUSTED,
@@ -223,22 +209,22 @@ class Agent:
         try:
             return self.provider.chat(messages, TOOLS, tool_choice)
         except ProviderTimeout as e:
-            raise _AnswerError(ErrorType.PROVIDER_TIMEOUT, str(e)) from e
+            raise _AnswerError(ErrorType.PROVIDER_TIMEOUT, "Provider request timed out") from e
         except ProviderError as e:
-            raise _AnswerError(ErrorType.PROVIDER_ERROR, str(e)) from e
+            raise _AnswerError(ErrorType.PROVIDER_ERROR, "Provider request failed") from e
 
     def _exec_fact_tool(self, tc: ToolCall) -> dict:
         try:
             args = tc.parsed_args()
         except ProviderError as e:
-            raise _AnswerError(ErrorType.INVALID_OUTPUT, str(e)) from e
+            raise _AnswerError(ErrorType.INVALID_OUTPUT, "invalid tool arguments") from e
         brand = args.get("brand_id")
-        if not isinstance(brand, str):
+        if set(args) != {"brand_id"} or not isinstance(brand, str) or not brand or brand != brand.strip():
             raise _AnswerError(ErrorType.INVALID_OUTPUT, "brand_id missing/invalid")
         try:
             return self.fact_tool.get_brand_facts(brand)
         except ToolError as e:
-            raise _AnswerError(ErrorType.UNKNOWN_BRAND, str(e)) from e
+            raise _AnswerError(ErrorType.UNKNOWN_BRAND, "model requested an unknown brand") from e
 
     def _finalize(self, answer_id, ai_answer, submit_call: ToolCall):
         try:
@@ -246,7 +232,7 @@ class Agent:
             extraction = ModelExtraction.model_validate(args)
         except Exception as e:
             raise _AnswerError(
-                ErrorType.INVALID_OUTPUT, f"bad submit_claims payload: {e}",
+                ErrorType.INVALID_OUTPUT, "invalid submit_claims payload",
             ) from e
         model_claims: list[ModelClaim] = extraction.claims
         try:
@@ -254,7 +240,7 @@ class Agent:
                 answer_id, ai_answer, model_claims, self.fact_tool.valid_fact_ids,
             )
         except ValidationError as e:
-            raise _AnswerError(ErrorType.VALIDATION_FAILED, str(e)) from e
+            raise _AnswerError(ErrorType.VALIDATION_FAILED, "claim validation failed") from e
         return claims
 
     @staticmethod
@@ -274,4 +260,4 @@ class Agent:
 
 
 def trace_turns(trace: list[dict]) -> int:
-    return sum(1 for t in trace if t.get("role") == "assistant")
+    return sum(1 for t in trace if t.get("role") == "request")
