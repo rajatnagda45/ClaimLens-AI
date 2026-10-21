@@ -1,0 +1,133 @@
+fact_id,brand_id,model_id,field,value,value_type,unit,condition,valid_from,valid_to
+cleartrail.mini.model_name,cleartrail,mini,model_name,ClearTrail Mini,string,,,2026-01-01,2026-12-31
+cleartrail.mini.price_2026,cleartrail,mini,price_2026,1299,number,INR,India official catalogue list price; tax included; shipping excluded,2026-01-01,2026-12-31
+cleartrail.mini.price_2025,cleartrail,mini,price_2025,999,number,INR,India official catalogue list price; tax included; shipping excluded,2025-01-01,2025-12-31
+cleartrail.mini.battery_50_percent,cleartrail,mini,battery_50_percent,12,number,hours,New battery; 50 percent volume; EQ off; laboratory test,2026-01-01,2026-12-31
+cleartrail.mini.battery_100_percent,cleartrail,mini,battery_100_percent,6,number,hours,New battery; 100 percent volume; EQ off; laboratory test,2026-01-01,2026-12-31
+cleartrail.mini.water_rating,cleartrail,mini,water_rating,IPX4,string,,Manufacturer declared water resistance rating,2026-01-01,2026-12-31
+cleartrail.mini.immersion_allowed,cleartrail,mini,immersion_allowed,false,boolean,,Fresh water; all port covers closed,2026-01-01,2026-12-31
+cleartrail.mini.warranty_india,cleartrail,mini,warranty_india,12,number,months,India purchase from authorized seller; original invoice required; manufacturing defects only,2026-01-01,2026-12-31
+cleartrail.mini.warranty_invoice_required,cleartrail,mini,warranty_invoice_required,true,boolean,,India standard manufacturer warranty,2026-01-01,2026-12-31
+cleartrail.mini.water_damage_covered,cleartrail,mini,water_damage_covered,false,boolean,,India standard manufacturer warranty; independent of water resistance rating,2026-01-01,2026-12-31
+cleartrail.mini.charging_port,cleartrail,mini,charging_port,USB-C,string,,,2026-01-01,2026-12-31
+cleartrail.mini.usb_audio,cleartrail,mini,usb_audio,false,boolean,,Wired digital audio through the USB-C port,2026-01-01,2026-12-31
+cleartrail.mini.bluetooth_version,cleartrail,mini,bluetooth_version,5.3,string,,,2026-01-01,2026-12-31
+cleartrail.mini.wifi,cleartrail,mini,wifi,false,boolean,,Built in Wi-Fi connectivity,2026-01-01,2026-12-31
+cleartrail.mini.microphone,cleartrail,mini,microphone,false,boolean,,Built in microphone,2026-01-01,2026-12-31
+cleartrail.mini.adapter_included,cleartrail,mini,adapter_included,false,boolean,,Official India retail box,2026-01-01,2026-12-31
+cleartrail.mini.cable_included,cleartrail,mini,cable_included,true,boolean,,USB-C charging cable in official India retail box,2026-01-01,2026-12-31
+cleartrail.mini.stereo_pairing_scope,cleartrail,mini,stereo_pairing_scope,same_model_only,string,,Two units of this exact model; cross-model stereo pairing unsupported,2026-01-01,2026-12-31
+cleartrail.mini.app_available,cleartrail,mini,app_available,false,boolean,,Manufacturer companion app supports this model,2026-01-01,2026-12-31
+cleartrail.mini.app_required_bluetooth,cleartrail,mini,app_required_bluetooth,false,boolean,,Basic Bluetooth playback does not require the manufacturer app,2026-01-01,2026-12-31
+cleartrail.mini.weight,cleartrail,mini,weight,320,number,grams,Speaker only; packaging and accessories excluded,2026-01-01,2026-12-31
+cleartrail.plus.model_name,cleartrail,plus,model_name,ClearTrail Plus,string,,,2026-01-01,2026-12-31
+cleartrail.plus.price_2026,cleartrail,plus,price_2026,2499,number,INR,India official catalogue list price; tax included; shipping excluded,2026-01-01,2026-12-31
+cleartrail.plus.price_2025,cleartrail,plus,price_2025,2199,number,INR,India official catalogue list price; tax included; shipping excluded,2025-01-01,2025-12-31
+cleartrail.plus.battery_50_percent,cleartrail,plus,battery_50_percent,20,number,hours,New battery; 50 percent volume; EQ off; laboratory test,2026-01-01,2026-12-31
+cleartrail.plus.battery_100_percent,cleartrail,plus,battery_100_percent,10,number,hours,New battery; 100 percent volume; EQ off; laboratory test,2026-01-01,2026-12-31
+cleartrail.plus.water_rating,cleartrail,plus,water_rating,IP67,string,,Manufacturer declared water resistance rating,2026-01-01,2026-12-31
+cleartrail.plus.immersion_allowed,cleartrail,plus,immersion_allowed,true,boolean,,Fresh water; all port covers closed,2026-01-01,2026-12-31
+cleartrail.plus.warranty_india,cleartrail,plus,warranty_india,12,number,months,India purchase from authorized seller; original invoice required; manufacturing defects only,2026-01-01,2026-12-31
+cleartrail.plus.warranty_invoice_required,cleartrail,plus,warranty_invoice_required,true,boolean,,India standard manufacturer warranty,2026-01-01,2026-12-31
+cleartrail.plus.water_damage_covered,cleartrail,plus,water_damage_covered,false,boolean,,India standard manufacturer warranty; independent of water resistance rating,2026-01-01,2026-12-31
+cleartrail.plus.charging_port,cleartrail,plus,charging_port,USB-C,string,,,2026-01-01,2026-12-31
+cleartrail.plus.usb_audio,cleartrail,plus,usb_audio,true,boolean,,Wired digital audio through the USB-C port,2026-01-01,2026-12-31
+cleartrail.plus.bluetooth_version,cleartrail,plus,bluetooth_version,5.3,string,,,2026-01-01,2026-12-31
+cleartrail.plus.wifi,cleartrail,plus,wifi,false,boolean,,Built in Wi-Fi connectivity,2026-01-01,2026-12-31
+cleartrail.plus.microphone,cleartrail,plus,microphone,true,boolean,,Built in microphone,2026-01-01,2026-12-31
+cleartrail.plus.adapter_included,cleartrail,plus,adapter_included,false,boolean,,Official India retail box,2026-01-01,2026-12-31
+cleartrail.plus.cable_included,cleartrail,plus,cable_included,true,boolean,,USB-C charging cable in official India retail box,2026-01-01,2026-12-31
+cleartrail.plus.stereo_pairing_scope,cleartrail,plus,stereo_pairing_scope,same_model_only,string,,Two units of this exact model; cross-model stereo pairing unsupported,2026-01-01,2026-12-31
+cleartrail.plus.app_available,cleartrail,plus,app_available,true,boolean,,Manufacturer companion app supports this model,2026-01-01,2026-12-31
+cleartrail.plus.app_required_bluetooth,cleartrail,plus,app_required_bluetooth,false,boolean,,Basic Bluetooth playback does not require the manufacturer app,2026-01-01,2026-12-31
+cleartrail.plus.weight,cleartrail,plus,weight,580,number,grams,Speaker only; packaging and accessories excluded,2026-01-01,2026-12-31
+cleartrail.plus.immersion_depth,cleartrail,plus,immersion_depth,1,number,metres,Fresh water; all port covers closed; maximum laboratory depth,2026-01-01,2026-12-31
+cleartrail.plus.immersion_duration,cleartrail,plus,immersion_duration,30,number,minutes,Fresh water; all port covers closed; maximum laboratory duration at stated depth,2026-01-01,2026-12-31
+stonewave.go.model_name,stonewave,go,model_name,StoneWave Go,string,,,2026-01-01,2026-12-31
+stonewave.go.price_2026,stonewave,go,price_2026,1999,number,INR,India official catalogue list price; tax included; shipping excluded,2026-01-01,2026-12-31
+stonewave.go.price_2025,stonewave,go,price_2025,1799,number,INR,India official catalogue list price; tax included; shipping excluded,2025-01-01,2025-12-31
+stonewave.go.battery_50_percent,stonewave,go,battery_50_percent,16,number,hours,New battery; 50 percent volume; EQ off; laboratory test,2026-01-01,2026-12-31
+stonewave.go.battery_100_percent,stonewave,go,battery_100_percent,8,number,hours,New battery; 100 percent volume; EQ off; laboratory test,2026-01-01,2026-12-31
+stonewave.go.water_rating,stonewave,go,water_rating,IPX5,string,,Manufacturer declared water resistance rating,2026-01-01,2026-12-31
+stonewave.go.immersion_allowed,stonewave,go,immersion_allowed,false,boolean,,Fresh water; all port covers closed,2026-01-01,2026-12-31
+stonewave.go.warranty_india,stonewave,go,warranty_india,18,number,months,India purchase from authorized seller; original invoice required; manufacturing defects only,2026-01-01,2026-12-31
+stonewave.go.warranty_invoice_required,stonewave,go,warranty_invoice_required,true,boolean,,India standard manufacturer warranty,2026-01-01,2026-12-31
+stonewave.go.water_damage_covered,stonewave,go,water_damage_covered,false,boolean,,India standard manufacturer warranty; independent of water resistance rating,2026-01-01,2026-12-31
+stonewave.go.charging_port,stonewave,go,charging_port,USB-C,string,,,2026-01-01,2026-12-31
+stonewave.go.usb_audio,stonewave,go,usb_audio,false,boolean,,Wired digital audio through the USB-C port,2026-01-01,2026-12-31
+stonewave.go.bluetooth_version,stonewave,go,bluetooth_version,5.2,string,,,2026-01-01,2026-12-31
+stonewave.go.wifi,stonewave,go,wifi,false,boolean,,Built in Wi-Fi connectivity,2026-01-01,2026-12-31
+stonewave.go.microphone,stonewave,go,microphone,false,boolean,,Built in microphone,2026-01-01,2026-12-31
+stonewave.go.adapter_included,stonewave,go,adapter_included,false,boolean,,Official India retail box,2026-01-01,2026-12-31
+stonewave.go.cable_included,stonewave,go,cable_included,true,boolean,,USB-C charging cable in official India retail box,2026-01-01,2026-12-31
+stonewave.go.stereo_pairing_scope,stonewave,go,stereo_pairing_scope,same_model_only,string,,Two units of this exact model; cross-model stereo pairing unsupported,2026-01-01,2026-12-31
+stonewave.go.app_available,stonewave,go,app_available,false,boolean,,Manufacturer companion app supports this model,2026-01-01,2026-12-31
+stonewave.go.app_required_bluetooth,stonewave,go,app_required_bluetooth,false,boolean,,Basic Bluetooth playback does not require the manufacturer app,2026-01-01,2026-12-31
+stonewave.go.weight,stonewave,go,weight,440,number,grams,Speaker only; packaging and accessories excluded,2026-01-01,2026-12-31
+stonewave.max.model_name,stonewave,max,model_name,StoneWave Max,string,,,2026-01-01,2026-12-31
+stonewave.max.price_2026,stonewave,max,price_2026,3499,number,INR,India official catalogue list price; tax included; shipping excluded,2026-01-01,2026-12-31
+stonewave.max.price_2025,stonewave,max,price_2025,3299,number,INR,India official catalogue list price; tax included; shipping excluded,2025-01-01,2025-12-31
+stonewave.max.battery_50_percent,stonewave,max,battery_50_percent,24,number,hours,New battery; 50 percent volume; EQ off; laboratory test,2026-01-01,2026-12-31
+stonewave.max.battery_100_percent,stonewave,max,battery_100_percent,12,number,hours,New battery; 100 percent volume; EQ off; laboratory test,2026-01-01,2026-12-31
+stonewave.max.water_rating,stonewave,max,water_rating,IP67,string,,Manufacturer declared water resistance rating,2026-01-01,2026-12-31
+stonewave.max.immersion_allowed,stonewave,max,immersion_allowed,true,boolean,,Fresh water; all port covers closed,2026-01-01,2026-12-31
+stonewave.max.warranty_india,stonewave,max,warranty_india,18,number,months,India purchase from authorized seller; original invoice required; manufacturing defects only,2026-01-01,2026-12-31
+stonewave.max.warranty_invoice_required,stonewave,max,warranty_invoice_required,true,boolean,,India standard manufacturer warranty,2026-01-01,2026-12-31
+stonewave.max.water_damage_covered,stonewave,max,water_damage_covered,false,boolean,,India standard manufacturer warranty; independent of water resistance rating,2026-01-01,2026-12-31
+stonewave.max.charging_port,stonewave,max,charging_port,USB-C,string,,,2026-01-01,2026-12-31
+stonewave.max.usb_audio,stonewave,max,usb_audio,true,boolean,,Wired digital audio through the USB-C port,2026-01-01,2026-12-31
+stonewave.max.bluetooth_version,stonewave,max,bluetooth_version,5.4,string,,,2026-01-01,2026-12-31
+stonewave.max.wifi,stonewave,max,wifi,false,boolean,,Built in Wi-Fi connectivity,2026-01-01,2026-12-31
+stonewave.max.microphone,stonewave,max,microphone,true,boolean,,Built in microphone,2026-01-01,2026-12-31
+stonewave.max.adapter_included,stonewave,max,adapter_included,false,boolean,,Official India retail box,2026-01-01,2026-12-31
+stonewave.max.cable_included,stonewave,max,cable_included,true,boolean,,USB-C charging cable in official India retail box,2026-01-01,2026-12-31
+stonewave.max.stereo_pairing_scope,stonewave,max,stereo_pairing_scope,same_model_only,string,,Two units of this exact model; cross-model stereo pairing unsupported,2026-01-01,2026-12-31
+stonewave.max.app_available,stonewave,max,app_available,true,boolean,,Manufacturer companion app supports this model,2026-01-01,2026-12-31
+stonewave.max.app_required_bluetooth,stonewave,max,app_required_bluetooth,false,boolean,,Basic Bluetooth playback does not require the manufacturer app,2026-01-01,2026-12-31
+stonewave.max.weight,stonewave,max,weight,900,number,grams,Speaker only; packaging and accessories excluded,2026-01-01,2026-12-31
+stonewave.max.immersion_depth,stonewave,max,immersion_depth,1,number,metres,Fresh water; all port covers closed; maximum laboratory depth,2026-01-01,2026-12-31
+stonewave.max.immersion_duration,stonewave,max,immersion_duration,30,number,minutes,Fresh water; all port covers closed; maximum laboratory duration at stated depth,2026-01-01,2026-12-31
+cloudnote.air.model_name,cloudnote,air,model_name,CloudNote Air,string,,,2026-01-01,2026-12-31
+cloudnote.air.price_2026,cloudnote,air,price_2026,1499,number,INR,India official catalogue list price; tax included; shipping excluded,2026-01-01,2026-12-31
+cloudnote.air.price_2025,cloudnote,air,price_2025,1199,number,INR,India official catalogue list price; tax included; shipping excluded,2025-01-01,2025-12-31
+cloudnote.air.battery_50_percent,cloudnote,air,battery_50_percent,10,number,hours,New battery; 50 percent volume; EQ off; laboratory test,2026-01-01,2026-12-31
+cloudnote.air.battery_100_percent,cloudnote,air,battery_100_percent,5,number,hours,New battery; 100 percent volume; EQ off; laboratory test,2026-01-01,2026-12-31
+cloudnote.air.water_rating,cloudnote,air,water_rating,IPX4,string,,Manufacturer declared water resistance rating,2026-01-01,2026-12-31
+cloudnote.air.immersion_allowed,cloudnote,air,immersion_allowed,false,boolean,,Fresh water; all port covers closed,2026-01-01,2026-12-31
+cloudnote.air.warranty_india,cloudnote,air,warranty_india,24,number,months,India purchase from authorized seller; original invoice required; manufacturing defects only,2026-01-01,2026-12-31
+cloudnote.air.warranty_invoice_required,cloudnote,air,warranty_invoice_required,true,boolean,,India standard manufacturer warranty,2026-01-01,2026-12-31
+cloudnote.air.water_damage_covered,cloudnote,air,water_damage_covered,false,boolean,,India standard manufacturer warranty; independent of water resistance rating,2026-01-01,2026-12-31
+cloudnote.air.charging_port,cloudnote,air,charging_port,USB-C,string,,,2026-01-01,2026-12-31
+cloudnote.air.usb_audio,cloudnote,air,usb_audio,false,boolean,,Wired digital audio through the USB-C port,2026-01-01,2026-12-31
+cloudnote.air.bluetooth_version,cloudnote,air,bluetooth_version,5.3,string,,,2026-01-01,2026-12-31
+cloudnote.air.wifi,cloudnote,air,wifi,false,boolean,,Built in Wi-Fi connectivity,2026-01-01,2026-12-31
+cloudnote.air.microphone,cloudnote,air,microphone,true,boolean,,Built in microphone,2026-01-01,2026-12-31
+cloudnote.air.adapter_included,cloudnote,air,adapter_included,false,boolean,,Official India retail box,2026-01-01,2026-12-31
+cloudnote.air.cable_included,cloudnote,air,cable_included,true,boolean,,USB-C charging cable in official India retail box,2026-01-01,2026-12-31
+cloudnote.air.stereo_pairing_scope,cloudnote,air,stereo_pairing_scope,same_model_only,string,,Two units of this exact model; cross-model stereo pairing unsupported,2026-01-01,2026-12-31
+cloudnote.air.app_available,cloudnote,air,app_available,false,boolean,,Manufacturer companion app supports this model,2026-01-01,2026-12-31
+cloudnote.air.app_required_bluetooth,cloudnote,air,app_required_bluetooth,false,boolean,,Basic Bluetooth playback does not require the manufacturer app,2026-01-01,2026-12-31
+cloudnote.air.weight,cloudnote,air,weight,350,number,grams,Speaker only; packaging and accessories excluded,2026-01-01,2026-12-31
+cloudnote.studio.model_name,cloudnote,studio,model_name,CloudNote Studio,string,,,2026-01-01,2026-12-31
+cloudnote.studio.price_2026,cloudnote,studio,price_2026,2999,number,INR,India official catalogue list price; tax included; shipping excluded,2026-01-01,2026-12-31
+cloudnote.studio.price_2025,cloudnote,studio,price_2025,2799,number,INR,India official catalogue list price; tax included; shipping excluded,2025-01-01,2025-12-31
+cloudnote.studio.battery_50_percent,cloudnote,studio,battery_50_percent,18,number,hours,New battery; 50 percent volume; EQ off; laboratory test,2026-01-01,2026-12-31
+cloudnote.studio.battery_100_percent,cloudnote,studio,battery_100_percent,9,number,hours,New battery; 100 percent volume; EQ off; laboratory test,2026-01-01,2026-12-31
+cloudnote.studio.water_rating,cloudnote,studio,water_rating,IPX7,string,,Manufacturer declared water resistance rating,2026-01-01,2026-12-31
+cloudnote.studio.immersion_allowed,cloudnote,studio,immersion_allowed,true,boolean,,Fresh water; all port covers closed,2026-01-01,2026-12-31
+cloudnote.studio.warranty_india,cloudnote,studio,warranty_india,24,number,months,India purchase from authorized seller; original invoice required; manufacturing defects only,2026-01-01,2026-12-31
+cloudnote.studio.warranty_invoice_required,cloudnote,studio,warranty_invoice_required,true,boolean,,India standard manufacturer warranty,2026-01-01,2026-12-31
+cloudnote.studio.water_damage_covered,cloudnote,studio,water_damage_covered,false,boolean,,India standard manufacturer warranty; independent of water resistance rating,2026-01-01,2026-12-31
+cloudnote.studio.charging_port,cloudnote,studio,charging_port,USB-C,string,,,2026-01-01,2026-12-31
+cloudnote.studio.usb_audio,cloudnote,studio,usb_audio,true,boolean,,Wired digital audio through the USB-C port,2026-01-01,2026-12-31
+cloudnote.studio.bluetooth_version,cloudnote,studio,bluetooth_version,5.4,string,,,2026-01-01,2026-12-31
+cloudnote.studio.wifi,cloudnote,studio,wifi,true,boolean,,Built in Wi-Fi connectivity,2026-01-01,2026-12-31
+cloudnote.studio.microphone,cloudnote,studio,microphone,false,boolean,,Built in microphone,2026-01-01,2026-12-31
+cloudnote.studio.adapter_included,cloudnote,studio,adapter_included,true,boolean,,Official India retail box,2026-01-01,2026-12-31
+cloudnote.studio.cable_included,cloudnote,studio,cable_included,true,boolean,,USB-C charging cable in official India retail box,2026-01-01,2026-12-31
+cloudnote.studio.stereo_pairing_scope,cloudnote,studio,stereo_pairing_scope,same_model_only,string,,Two units of this exact model; cross-model stereo pairing unsupported,2026-01-01,2026-12-31
+cloudnote.studio.app_available,cloudnote,studio,app_available,true,boolean,,Manufacturer companion app supports this model,2026-01-01,2026-12-31
+cloudnote.studio.app_required_bluetooth,cloudnote,studio,app_required_bluetooth,false,boolean,,Basic Bluetooth playback does not require the manufacturer app,2026-01-01,2026-12-31
+cloudnote.studio.weight,cloudnote,studio,weight,1100,number,grams,Speaker only; packaging and accessories excluded,2026-01-01,2026-12-31
+cloudnote.studio.immersion_depth,cloudnote,studio,immersion_depth,1,number,metres,Fresh water; all port covers closed; maximum laboratory depth,2026-01-01,2026-12-31
+cloudnote.studio.immersion_duration,cloudnote,studio,immersion_duration,30,number,minutes,Fresh water; all port covers closed; maximum laboratory duration at stated depth,2026-01-01,2026-12-31
