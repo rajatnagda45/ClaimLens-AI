@@ -3,7 +3,6 @@
 ClaimLens extracts factual sentences from long speaker-product answers and
 classifies them against the supplied catalogue. Python locates exact Unicode
 source spans; a deterministic harness scores extraction and joint classification.
-The project implements the Kasparro FSE Intern Pathway assessment.
 
 ## Start here
 
